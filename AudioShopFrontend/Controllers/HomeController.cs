@@ -754,7 +754,7 @@ namespace AudioShopFrontend.Controllers
                 using (var client = new HttpClient())
                 {
                     string authority;
-                    RequestParameters parameters = new RequestParameters("eefcd17b-6b67-4261-b8e0-2bd14e059957", (tmporder.TotalPrice*10).ToString(), "خرید از وب سایت استریو 8", "http://stereo8.ir/Verify?NidOrder=" + NidOrder, tmporder.Tel ?? "", tmporder.Email ?? "");
+                    RequestParameters parameters = new RequestParameters("YOUR_MERCHANT_ID", (tmporder.TotalPrice*10).ToString(), "خرید از وب سایت استریو 8", "http://stereo8.ir/Verify?NidOrder=" + NidOrder, tmporder.Tel ?? "", tmporder.Email ?? "");
 
                     var json = JsonConvert.SerializeObject(parameters);
 
@@ -812,7 +812,7 @@ namespace AudioShopFrontend.Controllers
 
                 parameters.amount = (tmpOrder.TotalPrice*10).ToString();
 
-                parameters.merchant_id = "eefcd17b-6b67-4261-b8e0-2bd14e059957";
+                parameters.merchant_id = "YOUR_MERCHANT_ID";
 
 
                 using (HttpClient client = new HttpClient())

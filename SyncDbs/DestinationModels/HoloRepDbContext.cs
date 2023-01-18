@@ -21,7 +21,7 @@ public partial class HoloRepDbContext : DbContext
 
     public virtual DbSet<RepLog> RepLogs { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=stereo8.ir\\MSSQLSERVER2017;Database=HoloRepDb;User Id=deploy1;Password=d972*Wfa9;TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("YOUR_DB_CONNECTION_STRING");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

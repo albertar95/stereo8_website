@@ -1,1 +1,0 @@
-Scaffold-DbContext "Server=.\MSSQL2017;Database=AudioShopDb;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context "AudioShopContext" -DataAnnotations
