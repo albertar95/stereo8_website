@@ -1,0 +1,718 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html lang="fa">
+<!-- Mirrored from demo.hasthemes.com/autima-preview/autima/404.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 22 Oct 2020 14:00:26 GMT -->
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P7YMRB3LF5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P7YMRB3LF5');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>@ViewData["Title"] - @AudioShopFrontend.Helpers.Commons.GetAppName(true)</title>
+    @*<meta name="description" content="">*@
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <!--meta tags-->
+    <link rel="profile" href="https://gmpg.org/xfn/11">
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:site_name" content="استریو 8" />
+    <meta property="og:title" content="@ViewData["Title"] - @AudioShopFrontend.Helpers.Commons.GetAppName(true)" />
+    <meta name="description" content="@ViewData["Desc"]" />
+    <meta property="og:description" content="@ViewData["Desc"]" />
+    <link rel="canonical" href="@ViewData["CUrl"]" />
+    <meta property="og:url" content="@ViewData["CUrl"]" />
+    <meta property="og:type" content="@ViewData["Typo"]" /><!--article,website,product-->
+    <!-- CSS
+    ========================= -->
+
+         <!--bootstrap min css-->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!--slick min css-->
+    <link rel="stylesheet" href="assets/css/slick.min.css">
+    <!--slinky menu css-->
+    <link rel="stylesheet" href="assets/css/slinky.menu.min.css">
+        @await RenderSectionAsync("Styles", required: false)
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="assets/css/style.min.css">
+    <!--modernizr min js here-->
+    <script src="assets/js/vendor/modernizr-3.7.1.min.js"></script>
+</head>
+<body>
+    <!-- Main Wrapper Start -->
+    <!--header area start-->
+    <header class="header_area ">
+        <!--header top start-->
+        <div class="header_top">
+            <div class="container">
+                <div class="top_inner">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="follow_us">
+                                <label>دنبال کردن :</label>
+                                <ul class="follow_link">
+                                    <li><a href="https://t.me/stereo8_ir"><i class="fa fa-telegram"></i></a></li>
+                                    <li><a href="https://www.instagram.com/stereo8.ir/"><i class="fa fa-instagram"></i></a></li>
+                                    <li><a href="@string.Format("https://youtube.com/@stereo8_ir")"><i class=" fa fa-youtube"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="top_right text-right">
+                                @if(HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                {
+                                    <ul>
+                                        <li class="top_links">
+                                            <a href="@Url.Action("Profile","Home")"><i class="ion-android-person"></i> @AudioShopFrontend.Helpers.UsersAuth.GetSpecificClaim(HttpContextAccessor.HttpContext.Request.Cookies["Stereo8Login"],3) <i class="ion-ios-arrow-down"></i></a>
+                                            <ul class="dropdown_links">
+                                                <li><a href="@Url.Action("Profile","Home")">حساب کاربری</a></li>
+                                                @if (int.Parse(HttpContextAccessor.HttpContext.Request.Cookies["CartCount"]) > 0)
+                                                {
+                                                    <li><a href="@Url.Action("Checkout","Home")">پرداخت</a></li>
+                                                }
+                                                <li><a href="#" data-toggle="modal" data-target="#logoutModal">خروج</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }else
+                                {
+                                    <ul>
+                                        <li class="top_links">
+                                            <a href="@Url.Action("Login","Home")"><i class="fa fa-sign-in"></i> ورود / ثبت نام </a>
+                                        </li>
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--header top start-->
+        <!--header middel start-->
+        <div class="header_middle">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="logo">
+                            <a href="/"><img src="assets/img/logo/logo.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-6">
+                        <div class="middel_right">
+                            <div class="search-container">
+                                <form action="#">
+                                    <div class="search_box">
+                                        <input placeholder="عنوان موردنظر را جستجو کنید..." type="text" id="SearchBox" oninput="SearchThis(0,null,0)" onfocusout="HideSearchResult()" onfocus="SearchThis(0,null,0)">
+                                        <button type="submit" onclick="SearchThis(1,event,0)"><i class="ion-ios-search-strong"></i></button>
+                                        <div style="background:#fbf5f5 !important;border-radius: 2px;position: absolute;width: 100%;display:grid;height: auto;z-index:99999;" id="SearchContent" hidden>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="middel_right_info">
+
+                                <div class="header_wishlist">
+                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                    {
+                                        <a href="@Url.Action("Favorites","Home")"><span class="lnr lnr-heart"></span>علاقه مندی</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" onclick="AddToFavoritesAlert(event)"><span class="lnr lnr-heart"></span>علاقه مندی</a>
+                                    }
+                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                    {
+                                        <span class="wishlist_quantity" id="favCount">@HttpContextAccessor.HttpContext.Request.Cookies["FavCount"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="wishlist_quantity" id="favCount">0</span>
+                                    }
+                                </div>
+                                <div class="mini_cart_wrapper">
+                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                    {
+                                        <a href="@Url.Action("Carts","Home")"><span class="lnr lnr-cart"></span>سبد خرید</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" onclick="AddToCartAlert(event)"><span class="lnr lnr-cart"></span>سبد خرید</a>
+                                    }
+                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                    {
+                                        <span class="cart_quantity" id="cartCount">@HttpContextAccessor.HttpContext.Request.Cookies["CartCount"]</span>
+                                    }else{
+                                        <span class="cart_quantity" id="cartCount">0</span>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--header middel end-->
+        <!--header bottom satrt-->
+        <div class="header_bottom mb-0 sticky-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="main_menu header_position">
+                            <nav>
+                                <ul>
+                                    <li><a href="/">صفحه اصلی</a></li>
+                                    <li><a href="@Url.Action("Categories","Home")">دسته بندی ها</a></li>
+                                    <li><a href="@Url.Action("Blog","Home")">وبلاگ</a></li>
+                                    <li><a href="@Url.Action("AboutUs","Home")">درباره ما</a></li>
+                                    <li><a href="@Url.Action("ContactUs","Home")">ارتباط با ما</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--header bottom end-->
+
+    </header>
+    <!--header area end-->
+    <!--Offcanvas menu area start-->
+    <div class="off_canvars_overlay"></div>
+    <div class="Offcanvas_menu canvas_padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="canvas_open">
+                        <span>منو اصلی</span>
+                        <a href="javascript:void(0)"><i class="ion-navicon"></i></a>
+                    </div>
+                    <div class="Offcanvas_menu_wrapper">
+                        <div class="canvas_close">
+                            <a href="#"><i class="ion-android-close"></i></a>
+                        </div>
+                        <div class="top_right text-right">
+                            @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                            {
+                                <ul>
+                                    <li class="top_links">
+                                        <a href="@Url.Action("Profile","Home")"><i class="ion-android-person"></i>@AudioShopFrontend.Helpers.UsersAuth.GetSpecificClaim(HttpContextAccessor.HttpContext.Request.Cookies["Stereo8Login"],3)<i class="ion-ios-arrow-down"></i></a>
+                                        <ul class="dropdown_links">
+                                            <li><a href="@Url.Action("Profile","Home")">حساب کاربری</a></li>
+                                            @if (int.Parse(HttpContextAccessor.HttpContext.Request.Cookies["CartCount"]) > 0)
+                                            {
+                                                <li><a href="@Url.Action("Checkout","Home")">پرداخت</a></li>
+                                            }
+                                            <li><a href="#" data-toggle="modal" data-target="#logoutModal">خروج</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <ul>
+                                    <li class="top_links">
+                                        <a href="@Url.Action("Login","Home")"><i class="fa fa-sign-in"></i> ورود / ثبت نام </a>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                        <div class="Offcanvas_follow">
+                            <label>دنبال کردن:</label>
+                            <ul class="follow_link">
+                                <li><a href="https://t.me/stereo8_ir"><i class="fa fa-telegram"></i></a></li>
+                                <li><a href="https://www.instagram.com/stereo8.ir/"><i class="fa fa-instagram"></i></a></li>
+                                <li><a href="@string.Format("https://youtube.com/@stereo8_ir")"><i class="fa fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="search-container">
+                            <form action="#">
+                                <div class="search_box">
+                                    <input placeholder="عنوان موردنظر را جستجو کنید..." type="text" id="SearchBox1" oninput="SearchThis(0,null,1)" onfocus="SearchThis(0,null,1)" onfocusout="HideSearchResult()">
+                                    <button type="submit" onclick="SearchThis(1,event,1)"><i class="ion-ios-search-strong"></i></button>
+                                    <div style="background:#fbf5f5 !important;border-radius: 2px;position: absolute;width: 100%;display:grid;height: auto;z-index:99999;" id="SearchContent1" hidden>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="menu" class="text-left ">
+                            <ul class="offcanvas_main_menu">
+                                    <li class="menu-item-has-children"><a href="/">صفحه اصلی</a></li>
+                                <li class="menu-item-has-children"><a href="@Url.Action("Categories","Home")">دسته بندی ها</a></li>
+                                    <li class="menu-item-has-children"><a href="@Url.Action("Blog","Home")">وبلاگ</a></li>
+                                    <li class="menu-item-has-children"><a href="@Url.Action("AboutUs","Home")">درباره ما</a></li>
+                                <li class="menu-item-has-children"><a href="@Url.Action("ContactUs","Home")">ارتباط با ما</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Offcanvas menu area end-->
+            @RenderBody()
+    <!--call to action start-->
+    <section class="call_to_action">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="call_action_inner">
+                        <div class="call_text">
+                            <h3> <span> توصیه </span> ما برای شما</h3>
+                            <p>محصولات تخفیف دار ما را ببینید</p>
+                        </div> 
+                        <div class="discover_now">
+                            <a href="@Url.Action("Bargain","Home")"> کلیک کنید </a>
+                        </div>
+                        <div class="link_follow">
+                            <ul>
+                                <li><a href="https://t.me/stereo8_ir"><i class="fa fa-telegram"></i></a></li>
+                                <li><a href="https://www.instagram.com/stereo8.ir/"><i class="fa fa-instagram"></i></a></li>
+                                <li><a href="@string.Format("https://youtube.com/@stereo8_ir")"><i class="fa fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--call to action end-->
+
+    <!--footer area start-->
+    <footer class="footer_widgets">
+        <div class="container">
+            <div class="footer_top">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="widgets_container contact_us">
+                            <div class="footer_logo">
+                                <a href="#"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                            <div class="footer_contact">
+                                <p>تیم @AudioShopFrontend.Helpers.Commons.GetAppName(true) در تلاش جهت ارائه محصولات با کیفیت در زمینه صوتی و تصویری ماشین می باشد</p>
+                                <p><span>آدرس</span>خیابان فردوسی پاساژ 26 پلاک 214</p>
+                                <p><span>شماره تماس</span>تلفن : <a href="tel:09354036003">09354036003</a></p>
+                                <p><span>ساعت کاری</span>روز های کاری هفته از ساعت 9 الی 19</p>
+                                <p><span>ایمیل</span>@string.Format("info@stereo8.ir")</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-sm-6">
+                        <div class="widgets_container widget_menu">
+                            <h3> راهنما</h3>
+                            <div class="footer_menu">
+                                <ul>
+                                    <li><a href="@Url.Action("AboutUs","Home")">درباره ما</a></li>
+                                    <li><a href="@Url.Action("ContactUs","Home")"> ارتباط با ما </a></li>
+                                    <li><a href="@Url.Action("Delivery","Home")">فرایند ارسال محصولات</a></li>
+@*                                    <li><a href="@Url.Action("Policy","Home")"> شرایط و ضوابط </a></li>
+                                    <li><a href="@Url.Action("Returns","Home")"> برگشت کالا</a></li>*@
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-sm-6">
+                        <div class="widgets_container widget_menu">
+                            <h3> لینک ها </h3>
+                            <div class="footer_menu">
+                                <ul>
+                                    <li><a href="@Url.Action("Categories","Home")"> دسته بندی ها</a></li>
+                                    <li><a href="@Url.Action("Login","Home")"> ورود </a></li>
+                                    <li><a href="@Url.Action("Blog","Home")"> وبلاگ </a></li>
+                                    <li><a href="@Url.Action("Bargain","Home")"> تخفیف ها </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="widgets_container">
+                            <h3> در خبرنامه ما مشترک شوید </h3>
+                            <p>ما هرگز آدرس ایمیل شما را با شخص ثالث به اشتراک نمی گذاریم.</p>
+                            <div class="subscribe_form">
+                                <form id="mc-form" class="mc-form footer-newsletter">
+                                    <input id="YourEmail" type="email" autocomplete="off" placeholder="آدرس ایمیل خود را وارد کنید..." required/>
+                                    <button id="mc-submit" onclick="AddNewsLetter(event)">عضویت</button>
+                                </form>
+                                <!-- mailchimp-alerts Start -->
+                                <div class="mailchimp-alerts text-centre">
+                                    <div class="mailchimp-submitting"></div><!-- mailchimp-submitting end -->
+                                    <div class="mailchimp-success"></div><!-- mailchimp-success end -->
+                                    <div class="mailchimp-error"></div><!-- mailchimp-error end -->
+                                </div><!-- mailchimp-alerts end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="footer_bottom">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="copyright_area">
+                            <p>  © 2020 <a href="webdesignrtl">وب دیزاین</a> حقوق مادی و معنوی سایت محفوظ می باشد.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="footer_payment text-right">
+                            <a href="#"><img src="assets/img/icon/payment.png" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+    </footer>
+    <!--footer area end-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin: 0 auto;">
+                    <h5 class="modal-title" id="exampleModalLabel">خروج</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">آیا برای خروج از حساب کاربری خود اطمینان دارید؟</div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <a class="btn btn-success" href="@Url.Action("Logout","Home")">بله</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">خیر</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalAddCart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin: 0 auto;">
+                    <h5 class="modal-title text-center" id="exampleModalLabel">پیام</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <p style="color:green;font-weight:bold;text-align:center;padding-bottom:2rem;padding-top:2rem;">محصول با موفقیت به سبد خرید اضافه گردید</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="modal__product-img">
+                                    <img class="img-fluid" id="modal_img" src="" alt="">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li style="display:grid;"><strong>نام محصول : </strong><span class="modal__product-title" id="modal_name"></span></li>
+                                    <li><strong>قیمت : </strong><span class="modal__product-price m-tb-15 ForceRTL" id="modal_price"></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;"><i id="modal_prodcount"></i> محصول در سبد خرید وجود دارد  </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <a class="btn btn-info" href="@Url.Action("Carts","Home")">سبد خرید</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">ادامه خرید</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalAddCartAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin: 0 auto;">
+                    <h5 class="modal-title" id="exampleModalLabel">پیام</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 modal__border">
+                                <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;" id="addcartalert"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalNewsletterAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="margin: 0 auto;">
+                    <h5 class="modal-title" id="exampleModalLabel">پیام</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 modal__border">
+                                <span class="modal__product-cart-item" id="NewsletterMessage" style="text-align:right;direction:rtl;float:right;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin: 0 auto;">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- JS
+============================================ -->
+    <!--animate css-->
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="assets/css/plugins.min.css">
+    <!--jquery min js-->
+    <script src="assets/js/vendor/jquery-3.4.1.min.js"></script>
+    <!--bootstrap min js-->
+<script src="assets/js/bootstrap.min.js"></script>
+<!--owl carousel min js-->
+<script src="assets/js/owl.carousel.min.js"></script>
+<!--slick min js-->
+<script src="assets/js/slick.min.js"></script>
+<!--magnific popup min js-->
+<script src="assets/js/jquery.magnific-popup.min.js"></script>
+<!--isotope packaged min js-->
+<script src="assets/js/isotope.pkgd.min.js"></script>
+<!--slinky menu js-->
+<script src="assets/js/slinky.menu.min.js"></script>
+<!-- Plugins JS -->
+<script src="assets/js/plugins.min.js"></script>
+    <!--font awesome css-->
+    <link rel="stylesheet" href="assets/css/font.awesome.min.css">
+    <!--ionicons min css-->
+    <link rel="stylesheet" href="assets/css/ionicons.min.css">
+<script type="text/javascript">
+        function AddNewsLetter(e) 
+        {
+            e.preventDefault();
+            var str1 = '@string.Format("@")'
+            var str2 = $("#YourEmail").val();
+            if ($("#YourEmail").val() != '' && str2.indexOf(str1) != -1) {
+                $.ajax(
+                    {
+                        url: '@Url.Action("AddToNewsletter","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: { Mail: $("#YourEmail").val() },
+                        success: function (result) {
+                            if (result.success) {
+                                $("#NewsletterMessage").text('ایمیل شما با موفقیت به خبر نامه اضافه گردید.از اعتماد شما متشکریم.');
+                                $('#mc-form').each(function () { this.reset(); });
+                            } else {
+                                $("#NewsletterMessage").text('خطا در انجام عملیات.لطفا مجدد امتحان نمایید');
+                            }
+                        },
+                        error: function () {
+                            $("#NewsletterMessage").text('خطا در انجام عملیات.لطفا مجدد امتحان نمایید');
+                        }
+                    });
+                $("#modalNewsletterAlert").modal('show');
+            }else
+            {
+                $("#NewsletterMessage").text('ایمیل وارد شده صحیح نمی باشد');
+                $("#modalNewsletterAlert").modal('show');
+            }
+        }
+        function SearchThis(typo,e,index) 
+        {
+            if(typo == 1)
+            {
+                e.preventDefault();
+            }
+            if(index == 0)
+            {
+                $("#SearchBox1").val($("#SearchBox").val());
+                if ($("#SearchBox").val().trim().length > 2) {
+                    $.ajax({
+                        url: '@Url.Action("Search","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: { Text: $("#SearchBox").val() },
+                        success: function (result) {
+                            if (result.success) {
+                                $("#SearchContent").removeAttr('hidden');
+                                $("#SearchContent1").removeAttr('hidden');
+                                $("#SearchContent").html(result.html.result);
+                                $("#SearchContent1").html(result.html.result);
+                            } else {
+                                $("#SearchContent").attr('hidden', 'hidden');
+                                $("#SearchContent1").attr('hidden', 'hidden');
+                            }
+                        },
+                        error: function () { }
+                    });
+                } else {
+                    if ($("#SearchContent").is(":hidden") == false) {
+                        $("#SearchContent").attr('hidden', 'hidden');
+                        $("#SearchContent1").attr('hidden', 'hidden');
+                    }
+                }
+            }else
+            {
+                $("#SearchBox").val($("#SearchBox1").val());
+                if ($("#SearchBox1").val().trim().length > 2) {
+                    $.ajax({
+                        url: '@Url.Action("Search","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: { Text: $("#SearchBox1").val() },
+                        success: function (result) {
+                            if (result.success) {
+                                $("#SearchContent1").removeAttr('hidden');
+                                $("#SearchContent1").html(result.html.result);
+                                $("#SearchContent").removeAttr('hidden');
+                                $("#SearchContent").html(result.html.result);
+                            } else {
+                                $("#SearchContent1").attr('hidden', 'hidden');
+                                $("#SearchContent").attr('hidden', 'hidden');
+                            }
+                        },
+                        error: function () { }
+                    });
+                } else {
+                    if ($("#SearchContent1").is(":hidden") == false) {
+                        $("#SearchContent1").attr('hidden', 'hidden');
+                        $("#SearchContent").attr('hidden', 'hidden');
+                    }
+
+                }
+            }
+        }
+        function HideSearchResult()
+        {
+            window.setTimeout(function()
+            {
+                $("#SearchContent").attr('hidden', 'hidden');
+                $("#SearchContent1").attr('hidden', 'hidden');
+            },100);
+        }
+        function AddToCart(e, productName, Price, ImageUrl, NidProd, quantity) {
+            e.preventDefault();
+            $.ajax(
+                {
+                    url: '@Url.Action("AddProductToCart","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidProduct: NidProd, Quantity: quantity, price: Price },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#modal_img").attr("src", ImageUrl)
+                            $("#modal_name").text(productName)
+                            $("#modal_price").text(addCommas(parseFloat(Price) * parseFloat(quantity)))
+                            $("#modal_prodcount").text(result.count)
+                            $("#cartCount").text(result.count)
+                            $("#modalAddCart").modal('show')
+                        } else {
+                            $("#addcartalert").text(result.message)
+                            $("#modalAddCartAlert").modal('show')
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function AddToCartAlert(e) {
+            e.preventDefault();
+            $("#addcartalert").text('برای انجام این عملیات می بایست ابتدا وارد حساب کاربری خود شوید');
+            $("#modalAddCartAlert").modal('show')
+        }
+        function AddToFavoritesAlert(e) {
+            e.preventDefault();
+            $("#addcartalert").text('برای انجام این عملیات می بایست ابتدا وارد حساب کاربری خود شوید');
+            $("#modalAddCartAlert").modal('show')
+        }
+        function AddToFavorites(e, nidproduct) {
+            e.preventDefault();
+            $.ajax(
+                {
+                    url: '@Url.Action("AddProductToFavorites","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidProduct: nidproduct },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#favCount").text(result.count);
+                            var target = e.target;
+                            var parent = target.parentElement;
+                            e.target.classList.remove('lnr-heart');
+                            $(parent).html('<i class="fa fa-heart"></i>');
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function addCommas(num) {
+            return num.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+        }
+        function checkPassword(str,typo) {
+            var pattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$");
+            switch(typo)
+            {
+                case 1:
+                    if (!str || str.length < 6) {
+                        $("#PasswordWarnDiv1").removeAttr('hidden');
+                    }
+                    if (pattern.test(str)) {
+                        $("#PasswordWarnDiv1").attr('hidden', 'hidden');
+                    } else {
+                        $("#PasswordWarnDiv1").removeAttr('hidden');
+                    }
+                    break;
+                case 2:
+                    if (!str || str.length < 6) {
+                        $("#PasswordWarnDiv2").removeAttr('hidden');
+                    }
+                    if (pattern.test(str)) {
+                        $("#PasswordWarnDiv2").attr('hidden', 'hidden');
+                    } else {
+                        $("#PasswordWarnDiv2").removeAttr('hidden');
+                    }
+                    break;
+                case 3:
+                    if (!str || str.length < 6) {
+                        $("#PasswordWarnDiv3").removeAttr('hidden');
+                    }
+                    if (pattern.test(str)) {
+                        $("#PasswordWarnDiv3").attr('hidden', 'hidden');
+                    } else {
+                        $("#PasswordWarnDiv3").removeAttr('hidden');
+                    }
+                    break;
+            }
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <!--less important files-->
+    <!--owl carousel min css-->
+    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <!--magnific popup min css-->
+    <link rel="stylesheet" href="assets/css/magnific-popup.min.css">
+    <!--jquery ui min css-->
+    <link rel="stylesheet" href="assets/css/jquery-ui.min.css">
+
+    <!--popper min js-->
+    <script src="assets/js/popper.min.js"></script>
+    <!--jquery ui min js-->
+    <script src="assets/js/jquery.ui.min.js"></script>
+    <!--jquery elevatezoom min js-->
+    <script src="assets/js/jquery.elevatezoom.min.js"></script>
+    <!-- Main JS -->
+<script src="assets/js/main.min.js"></script>
+</body>
+</html>

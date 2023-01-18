@@ -1,0 +1,108 @@
+﻿@model AudioShopBackend.Models.Type
+
+@{
+    ViewData["Title"] = "ویرایش نوع";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">ویرایش نوع</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="SubmitEditType">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="NidType" />
+                    <input type="hidden" asp-for="CategoryId" />
+                    <input type="hidden" asp-for="CreateDate" />
+                    <input type="hidden" asp-for="LastModified" />
+                    <input type="hidden" asp-for="State" />
+                    <div class="form-group">
+                        <label asp-for="TypeName" class="control-label">نام نوع</label>
+                        <input asp-for="TypeName" class="form-control" autofocus />
+                        <span asp-validation-for="TypeName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label">توضیحات</label>
+                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Keywords" class="control-label">کلیدواژه</label>
+                        <input name="Keywords" id="Keywords" value="@Model.Keywords" class="form-control" hidden />
+                        <div class="keywordinput-area" id="divKeywords">
+                            <input type="text" class="form-control" id="txtInput" placeholder="با علامت کاما جدا کنید" />
+                    </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="ذخیره" class="btn btn-warning" />
+                        <a href="@Url.Action("Category","Home",new { NidCategory = Model.CategoryId})" class="btn btn-secondary mr-2">بازگشت</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        //The entered keywords
+        var allKeywords = []
+        //Delete a keyword
+        function deleteWord(element) {
+            var index = allKeywords.indexOf($(element).parent('.pkeyword').text());
+            if (index !== -1) {
+                allKeywords.splice(index, 1);
+            }
+            $(element).parent('.pkeyword').remove();
+            $('#Keywords').val(allKeywords.join(','));
+        }
+        $(function () {
+            //intialize current keywords
+            var keys = '@Model.Keywords';
+            if (keys !== undefined && keys !== '') {
+                allKeywords = keys.split(',');
+                allKeywords.forEach(function (val, index) {
+                    $('#divKeywords > input[type=text]').after($('<p class="pkeyword">' + val + '<a class="pkeyworddelete" onclick="deleteWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                });
+            }
+            //Add a keyword
+            function addWord(word) {
+                if (word === undefined || word === '') {
+                    return;
+                }
+                allKeywords.push(word);
+                $('#divKeywords > input[type=text]').after($('<p class="pkeyword">' + word + '<a class="pkeyworddelete" onclick="deleteWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                $('#txtInput').val('');
+                $('#Keywords').val(allKeywords.join(','));
+                $('#txtInput').focus();
+            }
+            //On focus out, add word
+            function addWordFromTextBox() {
+                var val = $('#txtInput').val();
+                if (val !== undefined && val !== '') {
+                    addWord(val);
+                }
+            }
+            //On key press, check for , or ;
+            function checkLetter() {
+                var val = $('#txtInput').val()
+                if (val.length > 0) {
+                    var letter = val.slice(-1);
+                    if (letter === ',' || letter === ';') {
+                        var word = val.slice(0, -1);
+                        if (word.length > 0) {
+                            addWord(word);
+                        }
+                    }
+                }
+            }
+            $('#txtInput').blur(addWordFromTextBox);
+            $('#txtInput').keyup(checkLetter);
+            $('#divKeywords').click(function () { $('#txtInput').focus(); });
+        });
+    </script>
+}

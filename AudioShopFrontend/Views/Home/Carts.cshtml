@@ -1,0 +1,190 @@
+﻿@model AudioShopFrontend.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "سبد خرید";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="nofollow, noindex" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>سبد خرید</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--سبد خرید area start -->
+<div class="shopping_cart_area mt-32">
+    <div class="container">
+        <form action="#">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table_desc">
+                        <div class="cart_page table-responsive">
+                            <table id="tbl">
+                                <thead>
+                                    <tr>
+                                        <th class="product_remove">حذف</th>
+                                        <th class="product_thumb">تصویر</th>
+                                        <th class="product_name">محصول</th>
+                                        <th class="product-price">قیمت</th>
+                                        <th class="product_quantity">تعداد</th>
+                                        <th class="product_total">جمع کل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var crt in Model.Carts)
+                                    {
+                                        <tr id="@crt.NidCart">
+                                            <td class="product_remove"><a href="#" onclick="ClearProductFromCart(event,'@crt.NidCart')"><i class="fa fa-trash-o"></i></a></td>
+                                            @if (Model.Files.Any(p => p.RelateId == crt.ProductId && p.RelateType == 6))
+                                            {
+                                                <td class="product_thumb"><a href="@Url.Action("Product","Home",new {Title = crt.Product.ProductName.Trim().Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == crt.ProductId && p.RelateType == 6).FileUrl" alt="@crt.Product.ProductName.Trim().Replace(' ','_')"></a></td>
+                                            }else
+                                            {
+                                                <td class="product_thumb"></td>
+                                            }
+                                            <td class="product_name"><a href="@Url.Action("Product","Home",new {Title = crt.Product.ProductName.Trim().Replace(' ','_')})">@crt.Product.ProductName</a></td>
+                                            <td class="product-price">@String.Format("{0:n0} تومان", crt.Product.Price)</td>
+                                            <td class="product_quantity"><label>تعداد</label> <input min="1" max="@crt.Product.AvailableCount" value="@crt.Quantity" onchange="QuantityChanged('@crt.NidCart','@crt.Product.Price',this.value)" type="number"></td>
+                                            <td class="product_total" data-id="@crt.NidCart">@String.Format("{0:n0} تومان", crt.Product.Price * crt.Quantity)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--coupon code area start-->
+            <div class="coupon_area">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="coupon_code left">
+                            <h3>کد تخفیف</h3>
+                            <div class="coupon_inner">
+                                <p>اگر کد تخفیفی دارید آن را وارد کنید</p>
+                                <input placeholder="کد تخفیف" type="text" id="txtBargain">
+                                <button type="submit" onclick="BargainCode(event)">اعمال کد تخفیف</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="coupon_code right">
+                            <h3>جمع سبد خرید</h3>
+                            <div class="coupon_inner">
+                                <div class="cart_subtotal">
+                                    <p>جمع کل</p>
+                                    <p class="cart_amount" id="cartAggregate">@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</p>
+                                </div>
+                                <div class="cart_subtotal ">
+                                    <p>تخفیف</p>
+                                    <p class="cart_amount">0 تومن</p>
+                                </div>
+                                @*<a href="#">جمع با کد ویژه</a>*@
+
+                                <div class="cart_subtotal">
+                                    <p>جمع کل</p>
+                                    <p class="cart_amount" id="cartSumAggregate">@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</p>
+                                </div>
+                                <div class="checkout_btn">
+                                    @if(Model.Carts.Any())
+                                    {
+                                        <a id="btnCheckout" href="@Url.Action("Checkout","Home")">پرداخت</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--coupon code area end-->
+        </form>
+    </div>
+</div>
+<!--سبد خرید area end -->
+<div class="modal fade" id="modalTakhfifAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">پیام</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 modal__border">
+                            <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;">کد تخفیف معتبر نمی باشد</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+    {
+    <script type="text/javascript">
+        function QuantityChanged(nidcart, price, quantity) {
+            $.ajax(
+                {
+                    url: '@Url.Action("CartQuantityChanged","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidCart: nidcart, Quantity: quantity },
+                    success: function (result) {
+                        if (result.success) {
+                            var tmpPrice = parseFloat(price)*parseFloat(quantity);
+                            $('#tbl').find("td[data-id='" + nidcart + "']").text(addCommas(tmpPrice) + ' تومان ');
+                            $("#cartAggregate").text(addCommas(result.aggregate) + ' تومان ')
+                            $("#cartSumAggregate").text(addCommas(result.aggregate) + ' تومان ')
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function ClearProductFromCart(e,nidcart) {
+            e.preventDefault();
+            $.ajax(
+                {
+                    url: '@Url.Action("RemoveProductFromCart","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidCart: nidcart },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#cartCount").html(result.count);
+                            var cartItem = document.getElementById(nidcart)
+                            cartItem.remove();
+                            $("#cartAggregate").text(addCommas(result.aggregate) + ' تومان ')
+                            $("#cartSumAggregate").text(addCommas(result.aggregate) + ' تومان ')
+                            if(result.count == 0)
+                                $("#btnCheckout").remove();
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function BargainCode(e)
+        {
+            e.preventDefault();
+            if ($("#txtBargain").val() != "")
+                $("#modalTakhfifAlert").modal();
+        }
+    </script>
+}

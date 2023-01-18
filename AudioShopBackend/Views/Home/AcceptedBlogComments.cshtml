@@ -1,0 +1,193 @@
+﻿@model IEnumerable<AudioShopBackend.Models.BlogComment>
+@{
+    ViewData["Title"] = "نظرات تایید شده";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">نظرات تایید شده کاربران در بخش مقالات</h6>
+    </div>
+    <div class="card-body">
+        <div class="row" style="padding:25px;">
+            <div class="col-lg-6">
+                <div class="m-1">
+                    <a href="@Url.Action("BlogComments","Home")" class="btn btn-warning btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-list"></i>
+                        </span>
+                        <span class="text">صندوق نظرات</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            تاریخ
+                        </th>
+                        <th>
+                            نام کاربری
+                        </th>
+                        <th>
+                            متن
+                        </th>
+                        <th>
+                            عملیات
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.NidComment">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreateDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.Username)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CommentText)
+                            </td>
+                            <td>
+                                <a href="#" onclick="UnAcceptComment('@item.NidComment','@item.CommentText')" class="btn btn-warning btn-circle">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                <a href="#" onclick="DeleteComment('@item.NidComment','@item.CommentText')" class="btn btn-danger btn-circle">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">آیا برای حذف این نظر مطمئن هستید؟</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="txtmodalBody"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">خیر</button>
+                <a class="btn btn-success" href="#" onclick="" id="btnMDelete">بلی</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">آیا برای عدم تایید این نظر مطمئن هستید؟</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="txtmodalBody2"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">خیر</button>
+                <a class="btn btn-success" href="#" onclick="" id="btnMAccept">بلی</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        function UnAcceptComment(nidcomment, text) {
+            $("#txtmodalBody2").text(text);
+            $("#btnMAccept").attr('onclick', "SubmitUnAcceptComment('" + nidcomment + "')");
+            $("#acceptModal").modal();
+        }
+        function DeleteComment(nidcomment, text) {
+            $("#txtmodalBody").text(text);
+            $("#btnMDelete").attr('onclick', "SubmitDeleteComment('" + nidcomment + "')");
+            $("#deleteModal").modal();
+        }
+        function SubmitDeleteComment(nidcomment) {
+            $.ajax(
+                {
+                    url: '@Url.Action("DeleteBlogComment","Home")' + '?nidComment=' + nidcomment,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#successDiv").removeAttr('hidden');
+                            $("#successMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#successDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                            $("table#dataTable tr#" + nidcomment).remove();
+                        } else {
+                            $("#errorDiv").removeAttr('hidden');
+                            $("#errorMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#errorDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                        }
+                        $("#deleteModal").modal('toggle');
+                    },
+                    error: function () { }
+                });
+        }
+        function SubmitUnAcceptComment(nidcomment) {
+            $.ajax(
+                {
+                    url: '@Url.Action("UnAcceptBlogComment","Home")' + '?nidComment=' + nidcomment,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#successDiv").removeAttr('hidden');
+                            $("#successMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#successDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                            $("table#dataTable tr#" + nidcomment).remove();
+                        } else {
+                            $("#errorDiv").removeAttr('hidden');
+                            $("#errorMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#errorDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                        }
+                        $("#acceptModal").modal('toggle');
+                    },
+                    error: function () { }
+                });
+        }
+    </script>
+}
+

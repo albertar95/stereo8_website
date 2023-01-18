@@ -1,0 +1,4 @@
+﻿//source
+scaffold-dbcontext "Server=.;Database=Holoo1;User Id=sa;Password=safa@123;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir SourceModels -tables ARTICLE -Force
+//destination
+scaffold-dbcontext "Server=stereo8.ir\MSSQLSERVER2017;Database=HoloRepDb;User Id=deploy1;Password=d972*Wfa9;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DestinationModels -tables ARTICLE,ARTICLEBackup,RepLogs -Force

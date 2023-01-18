@@ -1,0 +1,602 @@
+﻿@model AudioShopBackend.Models.Category
+@{
+    ViewData["Title"] = "دسته بندی";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">دسته بندی : @Model.CategoryName</h6>
+        <div class="dropdown no-arrow d-flex">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                 aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header"></div>
+                <a class="dropdown-item" onclick="DeleteCategory()" href="#">حذف دسته بندی</a>
+                <a class="dropdown-item" onclick="CloseCategory()" href="#">غیرفعال کردن دسته بندی</a>
+            </div>
+        </div>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv" hidden>
+                <p id="errorMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <form asp-action="EditCategory">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="NidCategory" />
+                    <div class="form-group">
+                        <label asp-for="CategoryName" class="control-label">نام دسته بندی</label>
+                        <input asp-for="CategoryName" class="form-control" autofocus />
+                        <span asp-validation-for="CategoryName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label">توضیحات</label>
+                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Keywords" class="control-label">کلیدواژه</label>
+                        <input name="Keywords" id="CatKeywords" value="@Model.Keywords" class="form-control" hidden />
+                        <div class="keywordinput-area" id="divCatKeywords">
+                            <input type="text" class="form-control" id="txtInputCat" placeholder="با علامت کاما جدا کنید" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">تصاویر</label>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" onchange="UploadFile(1,'FileUpload1','catPrimaryUploadedFileDemo','CatPrimaryUploadMessage','@Model.NidCategory','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.CategoryPrimary)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.CategoryPrimary)')" id="FileUpload1">
+                            <label class="custom-file-label" for="FileUpload1" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">تصویر اصلی</label>
+                            <p id="CatPrimaryUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="catPrimaryUploadedFileDemo">
+                            @foreach (var item in AudioShopBackend.Helpers.FileSection.GetFilesById(Model.NidCategory, (byte)AudioShopBackend.Helpers.FileSection.CategoryFileTypes.primary))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" onchange="UploadFile(2,'FileUpload2','catSidebarUploadedFileDemo','CatSidebarMessage','@Model.NidCategory','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.CategorySidebar)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.CategorySidebar)')" id="FileUpload2">
+                            <label class="custom-file-label" for="FileUpload2" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">تصویر کناره</label>
+                            <p id="CatSidebarMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="catSidebarUploadedFileDemo">
+                            @foreach (var item in AudioShopBackend.Helpers.FileSection.GetFilesById(Model.NidCategory, (byte)AudioShopBackend.Helpers.FileSection.CategoryFileTypes.sidebar))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" onchange="UploadFile(3,'FileUpload3','catBannerUploadedFileDemo','CatBannerMessage','@Model.NidCategory','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.CategoryBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.CategoryBanner)')" id="FileUpload3">
+                            <label class="custom-file-label" for="FileUpload3" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">تصویر بنر</label>
+                            <p id="CatBannerMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="catBannerUploadedFileDemo">
+                            @foreach (var item in AudioShopBackend.Helpers.FileSection.GetFilesById(Model.NidCategory, (byte)AudioShopBackend.Helpers.FileSection.CategoryFileTypes.Banner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" onchange="UploadFile(4,'FileUpload4','catSidebarBannerUploadedFileDemo','CatSidebarBannerMessage','@Model.NidCategory','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.CategorySidebarBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.CategorySidebarBanner)')" id="FileUpload4">
+                            <label class="custom-file-label" for="FileUpload4" accept="image/*" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">تصویر بنر کناره</label>
+                            <p id="CatSidebarBannerMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="catSidebarBannerUploadedFileDemo">
+                            @foreach (var item in AudioShopBackend.Helpers.FileSection.GetFilesById(Model.NidCategory, (byte)AudioShopBackend.Helpers.FileSection.CategoryFileTypes.sidebarBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" onchange="UploadFile(5,'FileUpload5','catSliderUploadedFileDemo','CatSliderMessage','@Model.NidCategory','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.CategorySlider)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.CategorySlider)')" id="FileUpload5">
+                            <label class="custom-file-label" for="FileUpload5" accept="image/*" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">تصویر اسلایدر</label>
+                            <p id="CatSliderMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="catSliderUploadedFileDemo">
+                            @foreach (var item in AudioShopBackend.Helpers.FileSection.GetFilesById(Model.NidCategory, (byte)AudioShopBackend.Helpers.FileSection.CategoryFileTypes.Slider))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="State" class="control-label"></label>
+                        <input asp-for="State" class="form-control" />
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="CreateDate" class="control-label"></label>
+                        <input asp-for="CreateDate" class="form-control" />
+                        <span asp-validation-for="CreateDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="LastModified" class="control-label"></label>
+                        <input asp-for="LastModified" class="form-control" />
+                        <span asp-validation-for="LastModified" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="ذخیره" class="btn btn-warning" />
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-3">
+                <div class="d-flex mb-1">
+                    <a href="#" class="btn btn-block btn-outline-success" style="width:fit-content;justify-content:right;" onclick="AddType()">ایجاد نوع</a>
+                    <h2 class="text-center" style="margin:0 auto;">نوع</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="TblTypes" width="100%" cellspacing="0">
+                        <thead style="text-align:center;">
+                            <tr>
+                                <th>نام</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var type in Model.Types.OrderByDescending(p => p.CreateDate))
+                            {
+                                <tr style="text-align:center;">
+                                    <td>@type.TypeName</td>
+                                    <td>
+                                        <a href="@Url.Action("EditType","Home",new { NidType = type.NidType})" class="btn btn-warning btn-circle">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="#" onclick="DeleteType('@type.NidType','@type.TypeName')" class="btn btn-danger btn-circle">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="d-flex mb-1">
+                    <a href="#" class="btn btn-block btn-outline-success" style="width:fit-content;justify-content:right;" onclick="AddBrand()">ایجاد برند</a>
+                    <h2 class="text-center" style="margin:0 auto;">برند</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="TblBrands" width="100%" cellspacing="0">
+                        <thead style="text-align:center;">
+                            <tr>
+                                <th>نام</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var brand in Model.Brands.OrderByDescending(p => p.CreateDate))
+                            {
+                                <tr style="text-align:center;">
+                                    <td>@brand.BrandName</td>
+                                    <td>
+                                        <a href="@Url.Action("EditBrand","Home",new { NidBrand =brand.NidBrand })" class="btn btn-warning btn-circle">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <a href="#" onclick="DeleteBrand('@brand.NidBrand','@brand.BrandName')" class="btn btn-danger btn-circle">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="border-top:2px solid;" />
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="text-center">لیست محصولات</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="TblDones" width="100%" cellspacing="0">
+                    <thead style="text-align:center;">
+                        <tr>
+                            <th>عنوان</th>
+                            <th>نوع</th>
+                            <th>برند</th>
+                            <th>قیمت</th>
+                            <th>تخفیف</th>
+                            <th>تعداد موجود</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prd in Model.Products.Where(q => q.State == 0).OrderByDescending(p => p.CreateDate))
+                        {
+                            <tr style="text-align:center;">
+                                <td>@prd.ProductName</td>
+                                <td>@prd.Type.TypeName</td>
+                                <td>@prd.Brand.BrandName</td>
+                                <td>@String.Format("{0:n0} تومان", prd.Price)</td>
+                                <td>@prd.OffPercentage&nbsp;%</td>
+                                <td>@prd.AvailableCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="catModal" tabindex="-1" role="dialog" aria-labelledby="catModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="catModalLabel"></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="DeleteCategorySection" hidden>
+                    <div class="form-group">
+                        <p>آیا برای حذف این دسته بندی اطمینان دارید؟</p>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4 text-center">
+                                <a href="@Url.Action("DeleteCategory","Home",new { NidCategory = Model.NidCategory })" class="btn btn-danger">حذف</a>
+                            </div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="CloseCategorySection" hidden>
+                    <div class="form-group">
+                        <p id="txtDeleteProgress">آیا برای غیر فعال نمودن این دسته بندی اطمینان دارید؟</p>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4 text-center">
+                                <a href="@Url.Action("CloseCategory","Home",new { NidCategory = Model.NidCategory})" class="btn btn-info">غیرفعال کن</a>
+                            </div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="AddTypeSection" hidden>
+                    <form asp-action="AddType">
+                        <div class="row">
+                            <div class="col-md-8" style="margin:0 auto;">
+                                <input name="NidType" hidden />
+                                <input name="State" hidden />
+                                <input name="CategoryId" value="@Model.NidCategory" hidden />
+                                <input name="CreateDate" hidden />
+                                <input name="LastModified" hidden />
+                                <div class="form-group">
+                                    <label class="control-label">نام نوع</label>
+                                    <input name="TypeName" class="form-control" autofocus />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">توضیحات</label>
+                                    <textarea rows="5" name="Description" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">کلید واژه ها</label>
+                                    <input name="Keywords" id="typeKeyword" class="form-control" hidden />
+                                    <div class="keywordinput-area" id="divTypeKeywords">
+                                        <input type="text" class="form-control" id="txtInputType" placeholder="با علامت کاما جدا کنید" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <input type="submit" value="ایجاد" class="btn btn-primary" />
+                            <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">انصراف</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="DeleteTypeSection" hidden>
+                    <div class="form-group">
+                        <p>آیا برای حذف این نوع اطمینان دارید؟</p>
+                        <p id="txtTypeName"></p>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4 text-center">
+                                <a href="#" id="btnDeleteType" class="btn btn-danger">حذف</a>
+                            </div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="AddBrandSection" hidden>
+                    <form asp-action="AddBrand">
+                        <div class="row">
+                            <div class="col-md-8" style="margin:0 auto;">
+                                <input name="NidBrand" hidden />
+                                <input name="State" hidden />
+                                <input name="CategoryId" value="@Model.NidCategory" hidden />
+                                <input name="CreateDate" hidden />
+                                <input name="LastModified" hidden />
+                                <div class="form-group">
+                                    <label class="control-label">نام برند</label>
+                                    <input name="BrandName" class="form-control" autofocus />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">توضیحات</label>
+                                    <textarea rows="5" name="Description" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">کلید واژه ها</label>
+                                    <input name="Keywords" id="brandKeyword" class="form-control" hidden />
+                                    <div class="keywordinput-area" id="divBrandKeywords">
+                                        <input type="text" class="form-control" id="txtInputBrand" placeholder="با علامت کاما جدا کنید" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <input type="submit" value="ایجاد" class="btn btn-primary" />
+                            <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">انصراف</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="DeleteBrandSection" hidden>
+                    <div class="form-group">
+                        <p id="txtDeleteProgress">آیا برای حذف این برند اطمینان دارید؟</p>
+                        <p id="txtBrandName"></p>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4 text-center">
+                                <a href="#" id="btnDeleteBrand" class="btn btn-danger">حذف</a>
+                            </div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        //The entered keywords
+        var allCatKeywords = []
+        var allTypeKeywords = []
+        var allBrandKeywords = []
+        //Delete a keyword
+        function deleteCatWord(element) {
+            var index = allCatKeywords.indexOf($(element).parent('.pkeyword').text());
+            if (index !== -1) {
+                allCatKeywords.splice(index, 1);
+            }
+            $(element).parent('.pkeyword').remove();
+            $('#CatKeywords').val(allKeywords.join(','));
+        }
+        function deleteTypeWord(element) {
+            var index = allTypeKeywords.indexOf($(element).parent('.pkeyword').text());
+            if (index !== -1) {
+                allTypeKeywords.splice(index, 1);
+            }
+            $(element).parent('.pkeyword').remove();
+            $('#typeKeyword').val(allTypeKeywords.join(','));
+        }
+        function deleteBrandWord(element) {
+            var index = allBrandKeywords.indexOf($(element).parent('.pkeyword').text());
+            if (index !== -1) {
+                allBrandKeywords.splice(index, 1);
+            }
+            $(element).parent('.pkeyword').remove();
+            $('#brandKeyword').val(allBrandKeywords.join(','));
+        }
+        $(function () {
+            if ('@TempData["CategoryPageSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["CategoryPageSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["CategoryPageError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["CategoryPageError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $("#TblDones").DataTable();
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+            //intialize current keywords
+            var keys = '@Model.Keywords';
+            if (keys !== undefined && keys !== '') {
+                allCatKeywords = keys.split(',');
+                allCatKeywords.forEach(function (val, index) {
+                    $('#divCatKeywords > input[type=text]').after($('<p class="pkeyword">' + val + '<a class="pkeyworddelete" onclick="deleteCatWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                });
+            }
+            //Add a keyword
+            function addWord(word,typo) {
+                if (word === undefined || word === '') {
+                    return;
+                }
+                switch(typo)
+                {
+                    case 1:
+                        allCatKeywords.push(word);
+                        $('#divCatKeywords > input[type=text]').after($('<p class="pkeyword">' + word + '<a class="pkeyworddelete" onclick="deleteCatWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                        $('#txtInputCat').val('');
+                        $('#CatKeywords').val(allCatKeywords.join(','));
+                        $('#txtInputCat').focus();
+                        break;
+                    case 2:
+                        allTypeKeywords.push(word);
+                        $('#divTypeKeywords > input[type=text]').after($('<p class="pkeyword">' + word + '<a class="pkeyworddelete" onclick="deleteTypeWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                        $('#txtInputType').val('');
+                        $('#typeKeyword').val(allTypeKeywords.join(','));
+                        $('#txtInputType').focus();
+                        break;
+                    case 3:
+                        allBrandKeywords.push(word);
+                        $('#divBrandKeywords > input[type=text]').after($('<p class="pkeyword">' + word + '<a class="pkeyworddelete" onclick="deleteBrandWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                        $('#txtInputBrand').val('');
+                        $('#brandKeyword').val(allBrandKeywords.join(','));
+                        $('#txtInputBrand').focus();
+                        break;
+                }
+            }
+            //On focus out, add word
+            function addWordFromTextBox() {
+                var val1 = $('#txtInputCat').val();
+                if (val1 !== undefined && val1 !== '') {
+                    addWord(val1,1);
+                }
+                var val2 = $('#txtInputType').val();
+                if (val2 !== undefined && val2 !== '') {
+                    addWord(val2,2);
+                }
+                var val3 = $('#txtInputBrand').val();
+                if (val3 !== undefined && val3 !== '') {
+                    addWord(val3,3);
+                }
+            }
+            //On key press, check for , or ;
+            function checkLetter() {
+                var val1 = $('#txtInputCat').val()
+                if (val1.length > 0) {
+                    var letter1 = val1.slice(-1);
+                    if (letter1 === ',' || letter1 === ';') {
+                        var word1 = val1.slice(0, -1);
+                        if (word1.length > 0) {
+                            addWord(word1,1);
+                        }
+                    }
+                }
+                var val2 = $('#txtInputType').val()
+                if (val2.length > 0) {
+                    var letter2 = val2.slice(-1);
+                    if (letter2 === ',' || letter2 === ';') {
+                        var word2 = val2.slice(0, -1);
+                        if (word2.length > 0) {
+                            addWord(word2,2);
+                        }
+                    }
+                }
+                var val3 = $('#txtInputBrand').val()
+                if (val3.length > 0) {
+                    var letter3 = val3.slice(-1);
+                    if (letter3 === ',' || letter3 === ';') {
+                        var word3 = val3.slice(0, -1);
+                        if (word3.length > 0) {
+                            addWord(word3,3);
+                        }
+                    }
+                }
+            }
+            $('#txtInputCat').blur(addWordFromTextBox);
+            $('#txtInputCat').keyup(checkLetter);
+            $('#divCatKeywords').click(function () { $('#txtInputCat').focus(); });
+            $('#txtInputBrand').blur(addWordFromTextBox);
+            $('#txtInputBrand').keyup(checkLetter);
+            $('#divBrandKeywords').click(function () { $('#txtInputBrand').focus(); });
+            $('#txtInputType').blur(addWordFromTextBox);
+            $('#txtInputType').keyup(checkLetter);
+            $('#divTypeKeywords').click(function () { $('#txtInputType').focus(); });
+        });
+        function DeleteCategory() {
+            $("#catModalLabel").text('حذف دسته بندی');
+            $("#DeleteCategorySection").removeAttr('hidden');
+            $("#CloseCategorySection").attr('hidden', 'hidden');
+            $("#AddTypeSection").attr('hidden', 'hidden');
+            $("#DeleteTypeSection").attr('hidden', 'hidden');
+            $("#AddBrandSection").attr('hidden', 'hidden');
+            $("#DeleteBrandSection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+        function CloseCategory() {
+            $("#catModalLabel").text('غیرفعال کردن دسته بندی');
+            $("#CloseCategorySection").removeAttr('hidden');
+            $("#DeleteCategorySection").attr('hidden', 'hidden');
+            $("#AddTypeSection").attr('hidden', 'hidden');
+            $("#DeleteTypeSection").attr('hidden', 'hidden');
+            $("#AddBrandSection").attr('hidden', 'hidden');
+            $("#DeleteBrandSection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+        function AddType() {
+            $("#catModalLabel").text('ایجاد نوع');
+            $("#AddTypeSection").removeAttr('hidden');
+            $("#DeleteCategorySection").attr('hidden', 'hidden');
+            $("#CloseCategorySection").attr('hidden', 'hidden');
+            $("#DeleteTypeSection").attr('hidden', 'hidden');
+            $("#AddBrandSection").attr('hidden', 'hidden');
+            $("#DeleteBrandSection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+        function DeleteType(nidtype, title) {
+            $("#catModalLabel").text('حذف نوع');
+            $("#txtTypeName").text('نام نوع : ' + title);
+            $("#btnDeleteType").attr('href', '@Url.Action("DeleteType","Home")' + '?NidType=' + nidtype);
+            $("#DeleteTypeSection").removeAttr('hidden');
+            $("#CloseCategorySection").attr('hidden', 'hidden');
+            $("#AddTypeSection").attr('hidden', 'hidden');
+            $("#DeleteCategorySection").attr('hidden', 'hidden');
+            $("#AddBrandSection").attr('hidden', 'hidden');
+            $("#DeleteBrandSection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+        function AddBrand() {
+            $("#catModalLabel").text('ایجاد برند');
+            $("#AddBrandSection").removeAttr('hidden');
+            $("#CloseCategorySection").attr('hidden', 'hidden');
+            $("#AddTypeSection").attr('hidden', 'hidden');
+            $("#DeleteTypeSection").attr('hidden', 'hidden');
+            $("#DeleteCategorySection").attr('hidden', 'hidden');
+            $("#DeleteBrandSection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+        function DeleteBrand(nidbrand, title) {
+            $("#catModalLabel").text('حذف برند');
+            $("#txtBrandName").text('نام برند : ' + title);
+            $("#btnDeleteBrand").attr('href', '@Url.Action("DeleteBrand","Home")' + '?NidBrand=' + nidbrand);
+            $("#DeleteBrandSection").removeAttr('hidden');
+            $("#CloseCategorySection").attr('hidden', 'hidden');
+            $("#AddTypeSection").attr('hidden', 'hidden');
+            $("#DeleteTypeSection").attr('hidden', 'hidden');
+            $("#AddBrandSection").attr('hidden', 'hidden');
+            $("#DeleteCategorySection").attr('hidden', 'hidden');
+            $("#catModal").modal();
+        }
+    </script>
+}

@@ -1,0 +1,83 @@
+﻿@model AudioShopBackend.ViewModels.HolooProductViewModel
+
+@{
+    ViewData["Title"] = "محصولات هلو";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">محصولات در برنامه هلو</h6>
+    </div>
+    <div class="card-body">
+        <p>آخرین بروزرسانی : @Model.Latest.ReplicationDate</p>
+        <p>مدت زمان بروزرسانی : @Model.Latest.Duration</p>
+        <p>وضعیت بروزرسانی : @Model.Latest.ResultStatus</p>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            نام محصول
+                        </th>
+                        <th>
+                            قیمت
+                        </th>
+                        <th>
+                            تعداد باقی مانده
+                        </th>
+                        <th>
+                            تعداد فروش رفته
+                        </th>
+                        <th>
+                            کارتن
+                        </th>
+                        <th>
+                            بسته
+                        </th>
+                        <th>
+                            وزن
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Articles)
+                    {
+                        <tr>
+                            <td>
+                                @string.Format("{0}",item.AName ?? "")
+                            </td>
+                            <td>
+                                @string.Format("{0:n0}",item.SelPrice ?? 0)
+                            </td>
+                            <td>
+                                @string.Format("{0}",item.Exist ?? 0)
+                            </td>
+                            @if (item.ExistMandeh != null)
+                            {
+                                <td>
+                                    @string.Format("{0}", Math.Abs((decimal)item.ExistMandeh))
+                                </td>
+                            }else
+                            {
+                                <td>
+                                    0
+                                </td>
+                            }
+                            <td>
+                                @string.Format("{0}",item.Karton ?? 0)
+                            </td>
+                            <td>
+                                @string.Format("{0}", item.Basteh ?? 0)
+                            </td>
+                            <td>
+                                @string.Format("{0}",item.Weight ?? 0)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

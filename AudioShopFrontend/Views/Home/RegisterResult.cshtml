@@ -1,0 +1,47 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "پیام";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="nofollow, noindex" />
+}
+@if(Model)
+{
+    <div class="error_section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="error_form">
+                        <h1>تبریک</h1>
+                        <h2>به وبسایت @AudioShopFrontend.Helpers.Commons.GetAppName(true) خوش آمدید!</h2>
+                        <p>
+                            جهت تکمیل ثبت نام می بایست
+                            <br>روی لینک فعال سازی که به ایمیل شما ارسال شده است کلیک کنید.
+                        </p>
+                        <a href="/"> بازگشت به صفحه اصلی </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}else
+{
+    <div class="error_section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="error_form">
+                        <h1>خطا</h1>
+                        <p>
+                            خطایی رخ داده است.لطفا مجدد امتحان نمایید
+                        </p>
+                        <a href="/"> بازگشت به صفحه اصلی </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,487 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model AudioShopFrontend.ViewModels.CategoryViewModel
+@{
+    ViewData["Title"] = Model.Category.CategoryName;
+    ViewData["Desc"] = Model.Category.Description;
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("Category", "Home", new { Title = Model.Category.CategoryName.Trim().Replace(' ', '_') }));
+    ViewData["Typo"] = "product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+{
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    @if (Model.Products.OrderByDescending(p => p.LastModified).FirstOrDefault().LastModified != null)
+    {
+        <meta property="og:updated_time" content="@Model.Products.OrderByDescending(p => p.LastModified).FirstOrDefault().LastModified" />
+    }
+    else
+    {
+        <meta property="og:updated_time" content="@Model.Products.OrderByDescending(p => p.LastModified).FirstOrDefault().CreateDate" />
+    }
+    @if (Model.Files.Any(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 1))
+    {
+        <meta property="og:image" content="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 1).FileUrl" />
+        <meta name="twitter:image" content="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 1).FileUrl" />
+        <meta property="og:image:width" content="825" />
+        <meta property="og:image:height" content="190" />
+        <meta name="twitter:card" content="summary" />
+    }else
+    {
+        <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta property="og:image:width" content="1920" />
+        <meta property="og:image:height" content="1080" />
+        <meta name="twitter:card" content="summary_large_image" />
+    }
+    <meta property="og:image:alt" content="@Model.Category.CategoryName" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>@Model.Category.CategoryName</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--shop  area start-->
+<div class="shop_area shop_reverse">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <!--sidebar widget start-->
+                <aside class="sidebar_widget">
+                    <div class="widget_inner">
+                        <div class="widget_list widget_filter">
+                            <h2>فیلتر کردن بر اساس قیمت</h2>
+                            <form action="#">
+                                <div dir="rtl" id="slider-range"></div>
+                                <input type="text" name="text" id="amount" style="width:100%;" />
+                                <input type="text" name="text" id="amountMinVal" value="0" hidden />
+                                <input type="text" name="text" id="amountMaxVal" value="10000000" hidden />
+                            </form>
+                        </div>
+                        <div class="widget_list widget_categories">
+                            <h2>انواع</h2>
+                            <ul>
+                                @foreach (var typ in Model.Category.Types)
+                                {
+                                    <li>
+                                        @if(Model.TypeId != Guid.Empty)
+                                        {
+                                            if(Model.TypeId == typ.NidType)
+                                            {
+                                                <input type="checkbox" checked onchange="CheckboxTrigger('@typ.NidType',0)">
+                                            }else
+                                            {
+                                                <input type="checkbox" onchange="CheckboxTrigger('@typ.NidType',0)">
+                                            }
+                                        }else
+                                        {
+                                            <input type="checkbox" onchange="CheckboxTrigger('@typ.NidType',0)">
+                                        }
+                                        <a href="#">@typ.TypeName</a>
+                                        <span class="checkmark"></span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="widget_list widget_categories">
+                            <h2>برند</h2>
+                            <ul>
+                                @foreach (var brd in Model.Category.Brands)
+                                {
+                                    <li>
+                                        @if (Model.BrandId != Guid.Empty)
+                                        {
+                                            if (Model.BrandId == brd.NidBrand)
+                                            {
+                                                <input type="checkbox" checked onchange="CheckboxTrigger('@brd.NidBrand',1)">
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" onchange="CheckboxTrigger('@brd.NidBrand',1)">
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" onchange="CheckboxTrigger('@brd.NidBrand',1)">
+                                        }
+                                        <a href="#"> @brd.BrandName</a>
+                                        <span class="checkmark"></span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+@*                        <div class="widget_list widget_categories">
+                            <h2>فیلتر بر اساس رنگ</h2>
+                            <ul>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#">مشکی (6)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#">آبی (6)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#">قهوه ای  (10)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#"> سبز (6)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#"> صورتی (6)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#"> سفید (6)</a>
+                                    <span class="checkmark"></span>
+
+                                </li>
+                                <li>
+                                    <input type="checkbox">
+                                    <a href="#"> زرد (6)</a>
+                                    <span class="checkmark"></span>
+                                </li>
+                            </ul>
+                        </div>*@
+                    </div>
+                    <div class="shop_sidebar_banner">
+                        @if(Model.Files.Any(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 2))
+                        {
+                            <a href="@Url.Action("Category","Home",new {Title = Model.Category.CategoryName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 2).FileUrl" alt="@Model.Category.CategoryName.Replace(' ','_')"></a>
+                        }
+                    </div>
+                </aside>
+                <!--sidebar widget end-->
+            </div>
+            <div class="col-lg-9 col-md-12">
+                <!--shop wrapper start-->
+                <!--shop toolbar start-->
+                <div class="shop_banner">
+                    @if (Model.Files.Any(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 1))
+                    {
+                        <img src="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Category.NidCategory && p.RelateType == 1).FileUrl" alt="">
+                    }
+                </div>
+                <div class="shop_title">
+                    <h1>@Model.Category.CategoryName</h1>
+                </div>
+                <div class="shop_toolbar_wrapper">
+                    <div class="shop_toolbar_btn">
+
+                        <button data-role="grid_3" type="button" class=" btn-grid-3" data-toggle="tooltip" title="3"></button>
+
+                        <button data-role="grid_4" type="button" class=" btn-grid-4" data-toggle="tooltip" title="4"></button>
+
+                        <button data-role="grid_list" type="button" class="active btn-list" data-toggle="tooltip" title="List"></button>
+                    </div>
+                    <select id="SortBy">
+                        <option value="1">مرتب سازی بر اساس امتیاز</option>
+                        <option value="2" selected>مرتب سازی بر اساس جدیدترین</option>
+                        <option value="3">مرتب سازی بر اساس قیمت: از کم به زیاد</option>
+                        <option value="4">مرتب سازی بر اساس قیمت: از زیاد به کم</option>
+                        <option value="5">مرتب سازی بر اساس نام محصول </option>
+                    </select>
+                    <div class="page_amount">
+                        <p id="prdCount">تعداد محصولات : @Model.ProductCount</p>
+                    </div>
+                </div>
+                <!--shop toolbar end-->
+                <div id="prdWrapper">
+                <div class="row shop_wrapper grid_list">
+                    @foreach (var prd in Model.Products)
+                    {
+                        <div class=" col-12 ">
+                            <div class="single_product">
+                                <div class="product_name grid_name">
+                                    <h3><a href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})">@prd.ProductName</a></h3>
+                                        <p class="manufacture_product"><a href="@Url.Action("Category","Home",new { Title = prd.Category.CategoryName.Replace(' ','_'), BrandId = prd.BrandId.ToString()})"> @prd.Brand.BrandName </a></p>
+                                </div>
+                                <div class="product_thumb">
+                                    @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                    {
+                                            <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl" alt="@prd.ProductName.Replace(' ','_')"></a>
+                                    }
+                                    else
+                                    {
+                                            <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                    }
+@*                                    <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product11.jpg" alt=""></a>*@
+                                    <div class="label_product">
+                                        <span class="label_sale">@prd.OffPercentage %-</span>
+                                    </div>
+                                    <div class="action_links">
+                                        <ul>
+                                                @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                {
+                                                    <li class="wishlist"><a href="#" onclick="AddToFavorites(event,'@prd.NidProduct')" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                }
+                                                else
+                                                {
+                                                    <li class="wishlist"><a href="#" onclick="AddToFavoritesAlert(event)" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                }
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product_content grid_content">
+                                    <div class="content_inner">
+                                        <div class="product_ratings">
+                                            <ul>
+                                                @if (prd.Rating != null)
+                                                {
+                                                    @for (int j = (int)prd.Rating; j > 0; j--)
+                                                    {
+                                                            <li><i class="ion-star" style="color:#ffd54c;"></i></li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="product_footer d-flex align-items-center">
+                                            @if(prd.AvailableCount > 0)
+                                            {
+                                                    <div class="price_box">
+                                                        <span class="current_price">@String.Format("{0:n0} تومان", prd.Price)</span>
+                                                        @if (prd.OffPercentage > 0)
+                                                        {
+                                                            <span class="old_price">@String.Format("{0:n0} تومان", prd.PriceWithoutOff)</span>
+                                                        }
+                                                    </div>
+                                                    <div class="add_to_cart">
+                                                        @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                        {
+                                                            @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" onclick="AddToCartAlert(event)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                        }
+                                                    </div>
+                                            }else
+                                            {
+                                                    <div class="price_box">
+                                                        <span class="current_price">ناموجود</span>
+                                                    </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product_content list_content">
+                                    <div class="left_caption">
+                                        <div class="product_name">
+                                            <h3><a href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})">@prd.ProductName </a></h3>
+                                        </div>
+                                        <div class="product_ratings">
+                                            <ul>
+                                                @if (prd.Rating != null)
+                                                {
+                                                    @for (int j = (int)prd.Rating; j > 0; j--)
+                                                    {
+                                                            <li><i class="ion-star" style="color:#ffd54c;"></i></li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+
+                                        <div class="product_desc">
+                                            <p>
+                                                @Html.Raw(prd.Specification)
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="right_caption">
+                                        @if(prd.AvailableCount > 0)
+                                        {
+                                                <div class="text_available">
+                                                    <p> تعداد موجود :<span>@prd.AvailableCount</span></p>
+                                                </div>
+                                                <div class="price_box">
+                                                    <span class="current_price">@String.Format("{0:n0} تومان", prd.Price)</span>
+                                                    @if (prd.OffPercentage > 0)
+                                                    {
+                                                        <span class="old_price">@String.Format("{0:n0} تومان", prd.PriceWithoutOff)</span>
+                                                    }
+                                                </div>
+                                                <div class="cart_links_btn">
+                                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                    {
+                                                        @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                                        {
+                                                            <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" onclick="AddToCartAlert(event)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                    }
+                                                </div>
+                                        }else
+                                        {
+                                                <div class="price_box">
+                                                    <span class="current_price">ناموجود</span>
+                                                </div>
+                                        }
+                                        <div class="action_links_btn">
+                                            <ul>
+                                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavorites(event,'@prd.NidProduct')" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavoritesAlert(event)" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="shop_toolbar t_bottom">
+                    <div class="pagination">
+                        <ul>
+                                <li class="current">1</li>
+                                @if (Model.ProductCount > 10)
+                                {
+                                @for (var i = 2; i <= (int)Math.Ceiling((decimal)Model.ProductCount / 10); i++)
+                                {
+                                        <li><a href="#" onclick="Pagination(@i)">@i</a></li>
+                                }
+                                    <li class="next"><a href="#" onclick="Pagination(0)">بعدی</a></li>
+                                }
+                        </ul>
+                    </div>
+                </div>
+                <!--shop toolbar end-->
+                <!--shop wrapper end-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--shop  area end-->
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var Brands = []
+        var Types = []
+        var PageIndex = 1;
+        var SortIndex = 0;
+        if('@Model.TypeId' != '00000000-0000-0000-0000-000000000000')
+            Types.push('@Model.TypeId')
+        if ('@Model.BrandId' != '00000000-0000-0000-0000-000000000000')
+            Brands.push('@Model.BrandId')
+        function FilterProducts()
+        {
+            PageIndex = 1;
+            $.ajax(
+                {
+                    url: '@Url.Action("CategoryFilter","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidCategory: '@Model.Category.NidCategory', MinPrice: $("#amountMinVal").val(), MaxPrice: $("#amountMaxVal").val(), TypeId: Types.join(','), BrandId: Brands.join(','), Sorttype: SortIndex },
+                    success: function (result) {
+                        if (result.success)
+                        {
+                            $("#prdWrapper").html(result.html.result);
+                            $(".btn-grid-3").removeClass('active');
+                            $(".btn-grid-4").removeClass('active');
+                            $(".btn-list").addClass('active');
+                            $("#prdCount").text(result.countMessage)
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function CheckboxTrigger(currentId, typo) {
+            if (typo == 0) //type
+            {
+                if (Types.indexOf(currentId) >= 0) {
+                    const inx = Types.indexOf(currentId)
+                    Types.splice(inx, 1)
+                } else {
+                    Types.push(currentId)
+                }
+            }
+            if (typo == 1) //brand
+            {
+                if (Brands.indexOf(currentId) >= 0) {
+                    const inx2 = Brands.indexOf(currentId)
+                    Brands.splice(inx2, 1)
+                } else {
+                    Brands.push(currentId)
+                }
+            }
+            FilterProducts();
+        }
+        function Pagination(index)
+        {
+            if(index == 0)
+                PageIndex++;
+                else if(index == -1)
+                PageIndex--;
+                else
+                PageIndex = index;
+            $.ajax(
+                {
+                    url: '@Url.Action("CategoryPagination","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidCategory: '@Model.Category.NidCategory', MinPrice: $("#amountMinVal").val(), MaxPrice: $("#amountMaxVal").val(), TypeId: Types.join(','), BrandId: Brands.join(','), PageNumber: PageIndex, Sorttype: SortIndex },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#prdWrapper").html(result.html.result);
+                            $(".btn-grid-3").removeClass('active');
+                            $(".btn-grid-4").removeClass('active');
+                            $(".btn-list").addClass('active');
+                            $("#prdCount").text(result.countMessage)
+                        }
+                    },
+                    error: function () { }
+                });
+
+        }
+        $(function()
+        {
+            $("#SortBy").niceSelect();
+            $("#SortBy").change(function() {
+                SortIndex = $("#SortBy").find(':selected').val();
+                FilterProducts();
+            });
+        });
+    </script>
+}

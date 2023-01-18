@@ -1,0 +1,180 @@
+﻿@model IEnumerable<AudioShopBackend.Models.BlogCategory>
+@{
+    ViewData["Title"] = "دسته بندی های مقاله";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="padding:25px;">
+    <div class="col-lg-6">
+        <button data-toggle="modal" data-target="#addModal" class="btn btn-block btn-outline-success" style="width:200px;justify-content:right;">ایجاد دسته بندی مقاله</button>
+    </div>
+    <div class="col-lg-6">
+        <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+            <p id="successMessage"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+            <p id="errorMessage"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+</div>
+@for (var i = 0; i <= Model.Count() / 3; i++)
+{
+    <div class="row">
+        @foreach (var cat in Model.OrderByDescending(p => p.CreateDate).Skip(i * 3).Take(3))
+        {
+            <div class="col-xl-4">
+                <div class="card shadow mb-4 d-flex">
+                    <!-- Card Header - Accordion -->
+                    <a href="@Url.Action("BlogCategory","Home",new {NidCategory = cat.NidCategory})" class="d-block card-header py-3" style="background-color:@AudioShopBackend.Helpers.Commons.GenerateColor()">
+                        <h6 class="font-weight-bold text-primary" style="margin:0 auto;">@cat.CategoryName</h6>
+                        <p style="justify-content:right;display:contents;">
+                            تعداد مقالات : @cat.Blogs.Count
+                        </p>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse show">
+                        <div class="card-body d-flex">
+                            <div class="col col-xl-12 text-center">
+                                <h5>مقالات</h5>
+                                <hr>
+                                @foreach (var blg in cat.Blogs.OrderByDescending(p => p.CreateDate).Take(7))
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label class="custom-control-label text-left" for="'@blg.NidBlog'">
+                                                    @blg.Title
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> ایجاد دسته بندی مقاله</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form asp-action="AddBlogCategory">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8" style="margin:0 auto;">
+                            <input name="NidCategory" hidden />
+                            <input name="State" hidden />
+                            <input name="CreateDate" hidden />
+                            <input name="LastModified" hidden />
+                            <div class="form-group">
+                                <label class="control-label">نام دسته بندی</label>
+                                <input name="CategoryName" class="form-control" autofocus />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">توضیحات</label>
+                                <textarea rows="5" name="Description" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">کلید واژه ها</label>
+                                <input name="Keywords" id="Keywords" class="form-control" hidden />
+                                <div class="keywordinput-area" id="divKeywords">
+                                    <input type="text" class="form-control" id="txtInput" placeholder="با علامت کاما جدا کنید" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <input type="submit" value="ایجاد" class="btn btn-primary" />
+                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">انصراف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        //The entered keywords
+        var allKeywords = []
+        //Delete a keyword
+        function deleteWord(element) {
+            var index = allKeywords.indexOf($(element).parent('.pkeyword').text());
+            if (index !== -1) {
+                allKeywords.splice(index, 1);
+            }
+            $(element).parent('.pkeyword').remove();
+            $('#Keywords').val(allKeywords.join(','));
+        }
+        $(function () {
+            if ('@TempData["BlogCategorySuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["BlogCategorySuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["BlogCategoryError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["BlogCategoryError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+            //Add a keyword
+            function addWord(word) {
+                if (word === undefined || word === '') {
+                    return;
+                }
+                allKeywords.push(word);
+                $('#divKeywords > input[type=text]').after($('<p class="pkeyword">' + word + '<a class="pkeyworddelete" onclick="deleteWord(this)"><i class="fa fa-times" aria-hidden="true"></i></a></p>'));
+                $('#txtInput').val('');
+                $('#Keywords').val(allKeywords.join(','));
+                $('#txtInput').focus();
+            }
+            //On focus out, add word
+            function addWordFromTextBox() {
+                var val = $('#txtInput').val();
+                if (val !== undefined && val !== '') {
+                    addWord(val);
+                }
+            }
+            //On key press, check for , or ;
+            function checkLetter() {
+                var val = $('#txtInput').val()
+                if (val.length > 0) {
+                    var letter = val.slice(-1);
+                    if (letter === ',' || letter === ';') {
+                        var word = val.slice(0, -1);
+                        if (word.length > 0) {
+                            addWord(word);
+                        }
+                    }
+                }
+            }
+            $('#txtInput').blur(addWordFromTextBox);
+            $('#txtInput').keyup(checkLetter);
+            $('#divKeywords').click(function () { $('#txtInput').focus(); });
+        });
+    </script>
+}
+

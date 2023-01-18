@@ -1,0 +1,22 @@
+﻿@model int[]
+<div class="pagination">
+    <ul>
+        @if (Model[0] > 1)
+        {
+            <li class="next"><a href="#" onclick="Pagination(event,-1)">قبلی</a></li>
+        }
+        @for (var i = 1; i < Model[0]; i++)
+        {
+            <li><a href="#" onclick="Pagination(event,@i)">@i</a></li>
+        }
+        <li class="current">@Model[0]</li>
+        @if (Model[0] < (int)Math.Ceiling((decimal)Model[1] / 10))
+        {
+            @for (var i = Model[0] + 1; i <= (int)Math.Ceiling((decimal)Model[1] / 10); i++)
+            {
+                <li><a href="#" onclick="Pagination(event,@i)">@i</a></li>
+            }
+            <li class="next"><a href="#" onclick="Pagination(event,0)">بعدی</a></li>
+        }
+    </ul>
+</div>

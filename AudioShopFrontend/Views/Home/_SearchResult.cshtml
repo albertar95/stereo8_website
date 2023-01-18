@@ -1,0 +1,21 @@
+﻿@model IEnumerable<AudioShopFrontend.Models.Product>
+
+@foreach (var item in Model.ToList())
+{
+    <div class="" style="text-align:right;border:1px solid #d6cece;border-radius:1px;">
+        <div class="col-lg-12 d-flex" style="margin:10px;">
+            <div class="col-lg-9">
+                <a href="@Url.Action("Product","Home",new {Title = item.ProductName.Trim().Replace(' ','_')})" style="text-align:right;">@item.ProductName</a>
+            </div>
+            <div class="col-lg-3">
+                @if(item.AvailableCount > 0)
+                {
+                    <p>@String.Format("{0:n0} تومان", item.Price)</p>
+                }else
+                {
+                    <p>ناموجود</p>
+                }
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,398 @@
+﻿@model AudioShopBackend.ViewModels.SettingViewModel
+
+@{
+    ViewData["Title"] = "تنظیمات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">تنظیمات</h6>
+    </div>
+    <div class="card-body">
+        <div class="row p-2" style="padding:25px;">
+            <div class="col-lg-6">
+            </div>
+            <div class="col-lg-6">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 p-2 mb-5">
+            <form action="AddSetting">
+                <input name="NidSetting" hidden />
+                <input name="State" hidden />
+                <div class="form-group row">
+                    <div class="col-xl-5 pb-1 mb-3 mb-sm-0 d-flex">
+                        <label class="control-label">نام تنظیمات</label>
+                        <input name="SettingAttribute" class="form-control" autofocus />
+                    </div>
+                    <div class="col-xl-5 pb-1 d-flex">
+                        <label class="control-label">مقدار تنظیمات</label>
+                        <input name="SettingValue" class="form-control" />
+                    </div>
+                    <div class="col-xl-2 pb-1 d-flex">
+                        <input type="submit" value="ایجاد" class="btn btn-primary" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            نام تنظیمات
+                        </th>
+                        <th>
+                            مقدار
+                        </th>
+                        <th>
+                            عملیات
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Settings)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SettingAttribute)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SettingValue)
+                            </td>
+                            <td>
+                                <a href="#" onclick="EditSetting('@item.NidSetting','@item.SettingAttribute','@item.SettingValue','@item.State')" class="btn btn-warning btn-circle">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <a href="#" onclick="DeleteSetting('@item.NidSetting','@item.SettingAttribute')" class="btn btn-danger btn-circle">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">تصاویر عمومی</h6>
+    </div>
+    <div class="card-body">
+        <div class="row p-2" style="padding:25px;">
+            <div class="col-lg-6">
+            </div>
+            <div class="col-lg-6">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 p-2 mb-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">تصاویر</label>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(16,'FileUpload16','Slider1UploadedFileDemo','Slider1UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.Slider1)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.Slider1)')" id="FileUpload16">
+                            <label class="custom-file-label" for="FileUpload16" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">اسلایدر 1</label>
+                            <p id="Slider1UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="Slider1UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.Slider1))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(17,'FileUpload17','Slider2UploadedFileDemo','Slider2UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.Slider2)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.Slider2)')" id="FileUpload17">
+                            <label class="custom-file-label" for="FileUpload17" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">اسلایدر 2</label>
+                            <p id="Slider2UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="Slider2UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.Slider2))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(18,'FileUpload18','Slider3UploadedFileDemo','Slider3UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.Slider3)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.Slider3)')" id="FileUpload18">
+                            <label class="custom-file-label" for="FileUpload18" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">اسلایدر 3</label>
+                            <p id="Slider3UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="Slider3UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.Slider3))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(19,'FileUpload19','Slider4UploadedFileDemo','Slider4UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.Slider4)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.Slider4)')" id="FileUpload19">
+                            <label class="custom-file-label" for="FileUpload19" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">اسلایدر 4</label>
+                            <p id="Slider4UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="Slider4UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.Slider4))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(20,'FileUpload20','Slider5UploadedFileDemo','Slider5UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.Slider5)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.Slider5)')" id="FileUpload20">
+                            <label class="custom-file-label" for="FileUpload20" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">اسلایدر 5</label>
+                            <p id="Slider5UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="Slider5UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.Slider5))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(21,'FileUpload21','SmallBannerUploadedFileDemo','SmallBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.SmallBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.SmallBanner)')" id="FileUpload21">
+                            <label class="custom-file-label" for="FileUpload21" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر کوچک</label>
+                            <p id="SmallBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="SmallBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.SmallBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(22,'FileUpload22','MediumBanner1UploadedFileDemo','MediumBanner1UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.MediumBanner1)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.MediumBanner1)')" id="FileUpload22">
+                            <label class="custom-file-label" for="FileUpload22" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر متوسط راست</label>
+                            <p id="MediumBanner1UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="MediumBanner1UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.MediumBanner1))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(23,'FileUpload23','MediumBanner2UploadedFileDemo','MediumBanner2UploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.MediumBanner2)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.MediumBanner2)')" id="FileUpload23">
+                            <label class="custom-file-label" for="FileUpload23" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر متوسط چپ</label>
+                            <p id="MediumBanner2UploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="MediumBanner2UploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.MediumBanner2))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(24,'FileUpload24','LargeBannerUploadedFileDemo','LargeBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.LargeBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.LargeBanner)')" id="FileUpload24">
+                            <label class="custom-file-label" for="FileUpload24" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر بزرگ</label>
+                            <p id="LargeBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="LargeBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.LargeBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(25,'FileUpload25','AboutUsLargeBannerUploadedFileDemo','AboutUsLargeBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.AboutUsLargeBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.AboutUsLargeBanner)')" id="FileUpload25">
+                            <label class="custom-file-label" for="FileUpload25" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر بزرگ صفحه درباره ما</label>
+                            <p id="AboutUsLargeBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="AboutUsLargeBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.AboutUsLargeBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(26,'FileUpload26','AboutUsSocialBannerUploadedFileDemo','AboutUsSocialBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.AboutUsSocialBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.AboutUsSocialBanner)')" id="FileUpload26">
+                            <label class="custom-file-label" for="FileUpload26" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر فضای مجازی صفحه درباره ما</label>
+                            <p id="AboutUsSocialBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="AboutUsSocialBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.AboutUsSocialBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(27,'FileUpload27','AboutUsBlogBannerUploadedFileDemo','AboutUsBlogBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.AboutUsBlogBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.AboutUsBlogBanner)')" id="FileUpload27">
+                            <label class="custom-file-label" for="FileUpload27" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر مقالات صفحه درباره ما</label>
+                            <p id="AboutUsBlogBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="AboutUsBlogBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.AboutUsBlogBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(28,'FileUpload28','AboutUsWhatWeDoBannerUploadedFileDemo','AboutUsWhatWeDoBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.AboutUsWhatWeDoBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.AboutUsWhatWeDoBanner)')" id="FileUpload28">
+                            <label class="custom-file-label" for="FileUpload28" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر فضای مجازی صفحه درباره ما</label>
+                            <p id="AboutUsWhatWeDoBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="AboutUsWhatWeDoBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.AboutUsWhatWeDoBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="file" class="custom-file-input" accept="image/*" multiple onchange="UploadFile(29,'FileUpload29','ShipPageBannerUploadedFileDemo','ShipPageBannerUploadMessage','FF054DC4-6623-43CA-9421-FF74E329DD9B','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeWidths.ShipPageBanner)','@string.Format("{0}",(int)AudioShopBackend.Helpers.FileSection.FileTypeHeights.ShipPageBanner)')" id="FileUpload29">
+                            <label class="custom-file-label" for="FileUpload29" data-browse="انتخاب فایل" style="width:75%;margin:0 auto;">بنر صفحه ارسال مرسوله</label>
+                            <p id="ShipPageBannerUploadMessage" style="text-align:center;color:tomato;" hidden></p>
+                        </div>
+                        <div class="col-sm-6" style="display:flex;padding-right:10%;" id="ShipPageBannerUploadedFileDemo">
+                            @foreach (var item in Model.Files.Where(p => p.RelateType == (byte)AudioShopBackend.Helpers.FileSection.CommonFileTypes.ShipPageBanner))
+                            {
+                                <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item.NidFile" style="display: inline;">&#215;</a> <a href="@item.FileUrl" target="_blank" style="padding:25px;">@item.FileName</a> </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">آیا برای حذف این کاربر مطمئن هستید؟</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="txtmodalBody"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">خیر</button>
+                <a class="btn btn-success" href="#" id="btnMDelete">بلی</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ویرایش تنظیمات</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form asp-action="EditSetting">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8" style="margin:0 auto;">
+                            <input name="NidSetting" id="EditNidSetting" hidden />
+                            <input name="State" id="EditState" hidden />
+                            <div class="form-group">
+                                <label class="control-label">نام تنظیمات</label>
+                                <input name="SettingAttribute" id="EditSettingAttr" class="form-control" autofocus />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">مقدار تنظیمات</label>
+                                <input name="SettingValue" id="EditSettingVal" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <input type="submit" value="ویرایش" class="btn btn-warning" />
+                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">انصراف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["SettingSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["SettingSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["SettingError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["SettingError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+        });
+        function DeleteSetting(nidsetting, attr) {
+            $("#txtmodalBody").text('نام تنظیمات : ' + attr);
+            $("#btnMDelete").attr('href', '@Url.Action("DeleteSetting","Home")' + '?NidSetting=' + nidsetting);
+            $("#deleteModal").modal();
+        }
+        function EditSetting(nidsetting, attr,value,state) {
+            $("#EditNidSetting").val(nidsetting);
+            $("#EditState").val(state);
+            $("#EditSettingAttr").val(attr);
+            $("#EditSettingVal").val(value);
+            $("#editModal").modal();
+        }
+    </script>
+}

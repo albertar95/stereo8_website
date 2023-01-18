@@ -1,0 +1,13 @@
+﻿    <meta property="og:updated_time" content="2022-11-14T22:28:56+03:30" />
+    <meta property="og:image" content="https://seoedu.ir/wp-content/uploads/2021/06/seo-tutorial.jpg" />
+    <meta property="og:image:width" content="850" />
+    <meta property="og:image:height" content="549" />
+    <meta property="og:image:alt" content="آموزش سئو" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="آموزش سئو از صفر تا صد رایگان (مقدماتی تا پیشرفته) - SEOEDU" />
+    <meta name="twitter:description" content="آموزش سئو و بهینه سازی سایت، pdf اصطلاحات تخصصی سئو به صورت رایگان، آموزش سئو از مبتدی تا پیشرفته، آموزش سئو سایت وردپرسی و اختصاصی، آموزش سئو از پایه" />
+    <meta name="twitter:image" content="https://seoedu.ir/wp-content/uploads/2021/06/seo-tutorial.jpg" />
+
+        <meta property="article:published_time" content="1400-03-15\14:28:07" />
+    <meta property="article:modified_time" content="1401-08-23\18:58:56" />

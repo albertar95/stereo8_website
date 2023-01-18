@@ -1,0 +1,150 @@
+﻿@model AudioShopFrontend.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "بازگشت از درگاه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+{
+    <meta name="robots" content="nofollow, noindex" />
+}
+
+<!--error section area start-->
+<div class="error_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="error_form">
+                    @if (Model.Order.State == 100 || Model.Order.State == 101)
+                    {
+                        <h3><i class="fa fa-3x fa-check-square" style="color:green;"></i></h3>
+                        <h2>تراکنش موفق</h2>
+                        @switch (Model.Order.State)
+                        {
+                            case 100:
+                                <p style="text-align:center;font-size:larger;">خرید شما با موفقیت انجام گردید.جهت پیگیری سفارش به پروفایل کاربری خود رجوع کنید</p>
+                                break;
+                            case 101:
+                                <p style="text-align:center;font-size:larger;">عمليات پرداخت موفق بوده است</p>
+                                break;
+                        }
+                    }else{
+                        <h3><i class="fa fa-3x fa-times-rectangle" style="color:maroon;"></i></h3>
+                        <h2>تراکنش ناموفق</h2>
+                        @switch (Model.Order.State)
+                        {
+                            case -100:
+                                <p style="text-align:center;font-size:larger;">تراکنش ناموفق بوده یا توسط کاربر لغو شده است</p>
+                                break;
+                            case -101:
+                                <p style="text-align:center;font-size:larger;">خطایی در سرور رخ داده است.لطفا با پشتیبانی سایت تماس بگیرید</p>
+                                break;
+                            case 102:
+                                <p style="text-align:center;font-size:larger;">خطایی در سرور رخ داده است.لطفا با پشتیبانی سایت تماس بگیرید</p>
+                                break;
+                            case -1:
+                                <p style="text-align:center;font-size:larger;">اطلاعات ارسال شده ناقص است</p>
+                                break;
+                            case -2:
+                                <p style="text-align:center;font-size:larger;">و يا مرچنت كد پذيرنده صحيح نيست IP</p>
+                                break;
+                            case -3:
+                                <p style="text-align:center;font-size:larger;">با توجه به محدوديت هاي شاپرك امكان پرداخت با رقم درخواست شده ميسر نمي باشد</p>
+                                break;
+                            case -4:
+                                <p style="text-align:center;font-size:larger;">سطح تاييد پذيرنده پايين تر از سطح نقره اي است</p>
+                                break;
+                            case -11:
+                                <p style="text-align:center;font-size:larger;">درخواست مورد نظر يافت نشد</p>
+                                break;
+                            case -12:
+                                <p style="text-align:center;font-size:larger;">امكان ويرايش درخواست ميسر نمي باشد</p>
+                                break;
+                            case -21:
+                                <p style="text-align:center;font-size:larger;">هيچ نوع عمليات مالي براي اين تراكنش يافت نشد</p>
+                                break;
+                            case -22:
+                                <p style="text-align:center;font-size:larger;">تراكنش نا موفق ميباشد</p>
+                                break;
+                            case -33:
+                                <p style="text-align:center;font-size:larger;">رقم تراكنش با رقم پرداخت شده مطابقت ندارد</p>
+                                break;
+                            case -34:
+                                <p style="text-align:center;font-size:larger;">سقف تقسيم تراكنش از لحاظ تعداد يا رقم عبور نموده است</p>
+                                break;
+                            case -40:
+                                <p style="text-align:center;font-size:larger;">اجازه دسترسي به متد مربوطه وجود ندارد</p>
+                                break;
+                            case -41:
+                                <p style="text-align:center;font-size:larger;">اطلاعات ارسال شده مربوط به additionalData غیرمعتبر می باشد</p>
+                                break;
+                            case -42:
+                                <p style="text-align:center;font-size:larger;">مدت زمان معتبر طول عمر شناسه پرداخت بايد بين 30 دقيه تا 45 روز مي باشد</p>
+                                break;
+                            case -54:
+                                <p style="text-align:center;font-size:larger;">درخواست مورد نظر آرشيو شده است</p>
+                                break;
+                            default:
+                                <p>
+                                    خطای در فرایند پرداخت بوجود آمده است.در صورت کم شدن مبلغ از حسابتان با پشتیبانی تماس بگیرید
+                                </p>
+                                break;
+                        }
+                    }
+                    <section class="main_content_area">
+                        <div class="container">
+                            <div class="account_dashboard">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <!-- Tab panes -->
+                                        <div class="tab-content dashboard_content">
+                                            <div class="tab-pane fade show active">
+                                                <h3>اطلاعات تکمیلی</h3>
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr style="background-color:#b6bac7;">
+                                                                <th>مشخصات</th>
+                                                                <th>مقدار</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="background-color:#b6bac7;">نام و نام خانوادگی</td>
+                                                                <td>@Model.Order.FirstName&nbsp;@Model.Order.LastName</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="background-color:#b6bac7;">آدرس</td>
+                                                                <td>@Model.Order.Address</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="background-color:#b6bac7;">کد پستی</td>
+                                                                <td>@Model.Order.ZipCode</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="background-color:#b6bac7;">مبلغ کل</td>
+                                                                <td>@String.Format("{0:n0} تومان", Model.Order.TotalPrice)</td>
+                                                            </tr>
+                                                            @if (Model.Order.RefId != null)
+                                                            {
+                                                                <tr>
+                                                                    <td style="background-color:#b6bac7;">شماره پیگیری تراکنش</td>
+                                                                    <td>@Model.Order.RefId</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <a href="@Url.Action("Profile","Home")"> بازگشت به پروفایل </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--error section area end-->

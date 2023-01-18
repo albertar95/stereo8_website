@@ -1,0 +1,93 @@
+﻿@model AudioShopBackend.Models.User
+
+@{
+    ViewData["Title"] = "جزییات کاربر";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">جزییات کاربر</h6>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">
+                نام
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class="col-sm-2">
+                نام خانوادگی
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class="col-sm-2">
+                نام کاربری
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Username)
+            </dd>
+            <dt class="col-sm-2">
+                کاربر فعال
+            </dt>
+            <dd class="col-sm-10">
+                @if (!Model.IsDisabled)
+                {
+                    <i class="fa fa-sm fa-check-circle"></i>
+                }
+                else
+                {
+                    <i class="fa fa-sm fa-times-circle"></i>
+                }
+            </dd>
+            <dt class="col-sm-2">
+                کاربر ادمین
+            </dt>
+            <dd class="col-sm-10">
+                @if (Model.IsAdmin)
+                {
+                    <i class="fa fa-sm fa-check-circle"></i>
+                }
+                else
+                {
+                    <i class="fa fa-sm fa-times-circle"></i>
+                }
+            </dd>
+            <dt class="col-sm-2">
+                تاریخ ایجاد
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PersianCreateDate)
+            </dd>
+            <dt class="col-sm-2">
+                آخرین ورود کاربر
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PersianLastLoginDate)
+            </dd>
+            <dt class="col-sm-2">
+                کد پستی
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ZipCode)
+            </dd>
+            <dt class="col-sm-2">
+                آدرس
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+            <dt class="col-sm-2">
+                شماره تماس
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Tel)
+            </dd>
+        </dl>
+    </div>
+    </div>
+<div>
+    <a href="@Url.Action("Users","Home")" class="btn btn-secondary mr-2">بازگشت</a>
+</div>

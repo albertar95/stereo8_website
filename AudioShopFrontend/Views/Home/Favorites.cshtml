@@ -1,0 +1,119 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model AudioShopFrontend.ViewModels.FavoriteViewModel
+@{
+    ViewData["Title"] = "علاقه مندی ها";
+    ViewData["Typo"] = "website";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="nofollow, noindex" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>لیست علاقه‌مندی ها</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--wishlist area start -->
+<div class="wishlist_area mt-30">
+    <div class="container">
+        <form action="#">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table_desc wishlist">
+                        <div class="cart_page table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="product_remove">حذف</th>
+                                        <th class="product_thumb">تصویر</th>
+                                        <th class="product_name">محصول</th>
+                                        <th class="product-price">قیمت</th>
+                                        <th class="product_quantity">تعداد موجود</th>
+                                        <th class="product_total">افزودن به سبد خرید</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var fav in Model.Favorites)
+                                    {
+                                        <tr id="@fav.NidFav">
+                                            <td class="product_remove"><a href="#" onclick="ClearProductFromFav(event,'@fav.NidFav')">X</a></td>
+                                            @if (Model.Files.Any(p => p.RelateId == fav.ProductId && p.RelateType == 6))
+                                            {
+                                                <td class="product_thumb"><a href="@Url.Action("Product","Home",new {Title = fav.Product.ProductName.Trim().Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == fav.ProductId && p.RelateType == 6).FileUrl" alt="@fav.Product.ProductName.Trim().Replace(' ','_')"></a></td>
+                                            }else
+                                            {
+                                                <td class="product_thumb"></td>
+                                            }
+                                            <td class="product_name"><a href="@Url.Action("Product","Home",new {Title = fav.Product.ProductName.Trim().Replace(' ','_')})">@fav.Product.ProductName</a></td>
+                                            <td class="product-price">@String.Format("{0:n0} تومان", fav.Product.Price)</td>
+                                            <td class="product_quantity">@fav.Product.AvailableCount</td>
+                                            <td class="product_total">
+                                                @if(fav.Product.AvailableCount > 0)
+                                                {
+                                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                    {
+                                                        @if (Model.Files.Any(p => p.RelateId == fav.ProductId && p.RelateType == 6))
+                                                        {
+                                                            <a href="#" onclick="AddToCart(event, '@fav.Product.ProductName', '@fav.Product.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == fav.ProductId  && p.RelateType == 6).FileUrl', '@fav.Product.NidProduct',1)">افزودن به سبد خرید</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" onclick="AddToCart(event, '@fav.Product.ProductName', '@fav.Product.Price', '', '@fav.Product.NidProduct',1)">افزودن به سبد خرید</a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" onclick="AddToCartAlert(event)">افزودن به سبد خرید</a>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<!--wishlist area end -->
+@section scripts
+    {
+    <script type="text/javascript">
+        function ClearProductFromFav(e,nidfav) {
+            e.preventDefault();
+            $.ajax(
+                {
+                    url: '@Url.Action("RemoveProductFromFav","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { NidFav: nidfav },
+                    success: function (result) {
+                        if (result.success) {
+                            var favItem = document.getElementById(nidfav)
+                            favItem.remove();
+                            $("#favCount").text(result.count);
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+    </script>
+}

@@ -1,0 +1,94 @@
+﻿@model IEnumerable<AudioShopBackend.Models.Order>
+@{
+    ViewData["Title"] = "سفارشات بسته شده";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">سفارشات بسته شده</h6>
+    </div>
+    <div class="card-body">
+        <div class="row" style="padding:25px;">
+            <div class="col-lg-6">
+                <div class="m-1">
+                    <a href="@Url.Action("Orders","Home")" class="btn btn-warning btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                        <span class="text">سفارشات باز</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>
+                            تاریخ
+                        </th>
+                        <th>
+                            مشخصات
+                        </th>
+                        <th>
+                            شهر
+                        </th>
+                        <th>
+                            مبلغ
+                        </th>
+                        <th>
+                            شماره تماس
+                        </th>
+                        <th>
+                            عملیات
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.NidOrder">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PersianCreateDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FirstName)&nbsp;@Html.DisplayFor(modelItem => item.LastName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CityId)
+                            </td>
+                            <td>
+                                @String.Format("{0:n0} تومان", item.TotalPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Tel)
+                            </td>
+                            <td>
+                                <a href="@Url.Action("OrderDetail","Home",new{ NidOrder = item.NidOrder})" target="_blank" class="btn btn-info btn-circle">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+

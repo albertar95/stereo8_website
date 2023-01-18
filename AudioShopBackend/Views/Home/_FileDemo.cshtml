@@ -1,0 +1,6 @@
+﻿@model List<string[]>
+
+    @foreach (var item in Model)
+{
+    <div class="image-area"><a class="remove-image removeFile" href="#" onclick="btnRemoveFile(event)" id="@item[0]" style="display: inline;">&#215;</a> <a href="@item[1]" target="_blank" style="padding:25px;">@item[2]</a> </div>
+}

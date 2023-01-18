@@ -1,0 +1,70 @@
+﻿        //on configuring dbContext
+
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+    .AddJsonFile("appsettings.json")
+    .Build();
+        optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+
+
+        //scaffold-dbcontext
+
+        scaffold-dbcontext "Server=.\MSSQL2017;Database=AudioShopDb;User Id=sa;Password=safa@123;TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+
+        //on model creating
+
+        modelBuilder.Entity<Brand>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Brand>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Category>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Category>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Comment>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<File>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Order>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Order>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<OrderDetail>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<OrderDetail>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Product>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Product>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Ship>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Ship>().Property(e => e.PersianDueDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Type>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Type>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<User>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<User>().Property(e => e.PersianLastLoginDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Cart>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Cart>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Favorite>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<BlogCategory>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<BlogCategory>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<BlogComment>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Blog>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<Blog>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        //checkout coutinue btn
+                        if (isNullOrWhitespace($("#FirstName").val()) || isNullOrWhitespace($("#LastName").val()) || $("#StateId").val() == 0 || $("#CityId").val() == 0 || isNullOrWhitespace($("#ZipCode").val()) || isNullOrWhitespace($("#Address").val()) || !/^\d{10}$/.test($("#ZipCode").val())) {
+                    $("#warningDiv").removeAttr('hidden');
+                    $("#warningMessage").text('لطفا اطلاعات ارسال مرسوله را تکمیل نمایید');
+                    window.setTimeout(function () {
+                        $("#warningDiv").attr('hidden', 'hidden');
+                    }, 5000);
+                } else {
+                    $.ajax(
+                        {
+                            url: '@Url.Action("CheckoutSubmit","Home")',
+                            type: 'post',
+                            datatype: 'json',
+                            data: $("#FrmOrder").serialize(),
+                            success: function (result) {
+                                if (result.HasValue) {
+                                    window.location.href = result.redirect;
+                                } else {
+                                    $("#errorDiv").removeAttr('hidden');
+                                    $("#errorMessage").text(result.message);
+                                    window.setTimeout(function () {
+                                        $("#errorDiv").attr('hidden', 'hidden');
+                                    }, 5000);
+                                }
+                            },
+                            error: function () { }
+                        });
+                }

@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>@ViewData["Title"] - استریو 8</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="@Url.Content("~/vendor/fontawesome-free/css/all.min.css")" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/css/fonts.css")"
+          rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
+    <!-- Custom styles for this template-->
+    <link href="@Url.Content("~/css/sb-admin-2.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/vendor/datatables/dataTables.bootstrap4.min.css")" rel="stylesheet">
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index","Home")">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Stereo 8</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Index","Home")">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>میزکار</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Categories","Home")">
+                    <i class="fas fa-fw fa-align-justify"></i>
+                    <span>دسته بندی ها</span>
+                </a>
+                <div class="nav-item mb-0">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#ProductPart"
+                       aria-expanded="true" aria-controls="ProductPart">
+                        <i class="fas fa-fw fa-volume-up"></i>
+                        <span>بخش محصولات</span>
+                    </a>
+                    <div id="ProductPart" class="collapse" aria-labelledby="ProjectHeading"
+                         data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="@Url.Action("Products","Home")" style="text-align:right;">محصولات</a>
+                            <a class="collapse-item" href="@Url.Action("HolooProducts","Home")" style="text-align:right;">بروزرسانی محصولات</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Orders","Home")">
+                    <i class="fas fa-fw fa-cart-plus"></i>
+                    <span>سفارشات</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Ships","Home")">
+                    <i class="fas fa-fw fa-plane"></i>
+                    <span>مرسوله ها</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Users","Home")">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>کاربران</span>
+                </a>
+                <div class="nav-item mb-0">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#BlogPart"
+                       aria-expanded="true" aria-controls="BlogPart">
+                        <i class="fas fa-fw fa-newspaper"></i>
+                        <span>بخش مقالات</span>
+                    </a>
+                    <div id="BlogPart" class="collapse" aria-labelledby="ProjectHeading"
+                         data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <a class="collapse-item" href="@Url.Action("BlogCategories","Home")" style="text-align:right;">دسته بندی</a>
+                            <a class="collapse-item" href="@Url.Action("Blogs","Home")" style="text-align:right;">مقاله ها</a>
+                            <a class="collapse-item" href="@Url.Action("BlogComments","Home")" style="text-align:right;">نظرات</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Charts","Home")">
+                    <i class="fas fa-fw fa-chart-area"></i>
+                    <span>آمار</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Comments","Home")">
+                    <i class="fas fa-fw fa-comments"></i>
+                    <span>نظرات</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Settings","Home")">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>تنظیمات کلی</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                   aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav mr-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-left p-3 shadow animated--grow-in"
+                                 aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                               placeholder="Search for..." aria-label="Search"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                <span class="ml-2 d-none d-lg-inline text-gray-600 small">@User.Claims.Where(p => p.Type == "Username").FirstOrDefault().Value</span>
+                                <img class="img-profile rounded-circle"
+                                     src="@Url.Content("~/img/undraw_profile.svg")">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-left shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="@Url.Action("Profile","Home")">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    @RenderBody()
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="@Url.Action("Logout","Home")">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="UploadModal" tabindex="-1" role="dialog" aria-labelledby="UploadModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="UploadModalLabel">بارگذاری</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="uploadModalHeader" style="text-align:right;">
+                        فایل در حال بارگذاری می باشد.لطفا منتظر بمانید
+                    </h2>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="UploadProgress"
+                             role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                             style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="DeleteFileModal" tabindex="-1" role="dialog" aria-labelledby="DeleteFileModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="DeleteFileModalLabel">حذف</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="DetailModalBody">
+                    <input type="text" id="ModalcurrentId" hidden />
+                </div>
+                <p id="DeleteQuestion" style="margin:0 auto;font-size:xx-large;font-weight:bolder;">
+                    آیا برای حذف اطمینان
+                    دارید؟
+                </p>
+                <div class="modal-footer">
+                    <div class="col-lg-12" style="display: flex;">
+                        <div class="col-lg-4"></div>
+                        <div class="col-lg-4">
+                            <button class="btn btn-success" type="button" onclick="deleteFile()"
+                                    id="btnOk">
+                                بلی
+                            </button>
+                            <button class="btn btn-danger" type="button" data-dismiss="modal"
+                                    id="btnCancel">
+                                خیر
+                            </button>
+                        </div>
+                        <div class="col-lg-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="@Url.Content("~/vendor/jquery/jquery.min.js")"></script>
+    <script src="@Url.Content("~/vendor/bootstrap/js/bootstrap.bundle.min.js")"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="@Url.Content("~/vendor/jquery-easing/jquery.easing.min.js")"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="@Url.Content("~/js/sb-admin-2.min.js")"></script>
+    <!-- Page level plugins -->
+    <script src="@Url.Content("~/vendor/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables/dataTables.bootstrap4.min.js")"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="@Url.Content("~/js/demo/datatables-demo.js")"></script>
+    <script type="text/javascript">
+        function UploadFile(typo, uploadId,resultDiv,resultMessage,RelateId,width,height)
+        {
+            var formData = new FormData();
+            let files = document.getElementById(uploadId);
+            for (let i = 0; i < files.files.length; i++) {
+                formData.append('files' + i, files.files[i]);
+            }
+            formData.append('fileType', typo);
+            formData.append('RelateId', RelateId);
+            formData.append('ImageWidth', width);
+            formData.append('ImageHeight', height);
+            AdvanceInProgressBar(0);
+            document.getElementById(resultMessage).setAttribute('hidden', 'hidden');
+            $("#UploadModal").modal('show');
+            AdvanceInProgressBar(10);
+            $.ajax({
+                url: '@Url.Action("UploadFile","Home")',
+                type: 'post',
+                datatype: 'json',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result.success) {
+                        window.setTimeout(function () {
+                            AdvanceInProgressBar(100);
+                        }, 1000);
+                        document.getElementById(resultDiv).innerHTML = result.pics;
+
+                    } else {
+                        window.setTimeout(function () {
+                            document.getElementById(resultMessage).removeAttribute('hidden');
+                            document.getElementById(resultMessage).innerText = 'خطا در بارگذاری.لطفا مجدد امتحان کنید';
+                        }, 3000);
+                    }
+                },
+                error: function () {
+                    window.setTimeout(function () {
+                        document.getElementById(resultMessage).removeAttribute('hidden');
+                        document.getElementById(resultMessage).innerText = 'خطا در بارگذاری.لطفا مجدد امتحان کنید';
+                    }, 3000);
+                }
+            });
+            window.setTimeout(function () {
+                $("#UploadModal").modal('hide');
+            }, 3000);
+        }
+        function AdvanceInProgressBar(newValue) {
+            $("#UploadProgress").css('width', newValue + '%');
+        }
+        function btnRemoveFile(e) {
+            e.preventDefault();
+            $("#ModalcurrentId").val(e.target.id);
+            $("#DeleteFileModal").modal('show');
+        }
+
+        function deleteFile() {
+            var current = $("#ModalcurrentId").val();
+            $.ajax({
+                url: '@Url.Action("DeleteFile","Home")' + '?NidFile=' + current,
+                type: 'post',
+                datatype: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        var elem = document.getElementById(current);
+                        elem.parentElement.remove();
+                    }
+                },
+                error: function () { }
+            });
+            $("#DeleteFileModal").modal('hide');
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

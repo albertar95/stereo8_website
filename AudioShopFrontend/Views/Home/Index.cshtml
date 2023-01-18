@@ -1,0 +1,691 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model AudioShopFrontend.ViewModels.IndexViewModel
+@{
+    ViewData["Title"] = "صفحه اصلی";
+    ViewData["Desc"] = "وب سایت استریو 8 - فروشگاه محصولات صوتی و تصویری ماشین";
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("Index", "Home"));
+    ViewData["Typo"] = "website";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+{
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    @if (Model.SpecialProducts.Any() && Model.SpecialProducts.OrderByDescending(p => p.LastModified).FirstOrDefault().LastModified != null)
+    {
+        <meta property="og:updated_time" content="@Model.SpecialProducts.OrderByDescending(p => p.LastModified).FirstOrDefault().LastModified" />
+    }
+    else
+    {
+        <meta property="og:updated_time" content="2022-12-09T22:28:56+03:30" />
+    }
+    <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="وبسایت استریو 8" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+    <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+}
+<!--slider area start done-->
+<section class="slider_section mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="categories_menu">
+                    <div class="categories_title">
+                        <h2 class="categori_toggle">دسته بندی ها</h2>
+                    </div>
+                    <div class="categories_menu_toggle">
+                        <ul>
+                            @foreach (var sideCats in Model.SidebarCategories.OrderBy(p => p.CategoryName).Take(9))
+                            {
+                                <li><a href="@Url.Action("Category","Home",new { Title = sideCats.CategoryName.Replace(' ','_')})">@sideCats.CategoryName</a></li>
+                            }
+                            @if (Model.SidebarCategories.Count() > 9)
+                            {
+                                <li><a href="#" id="more-btn"><i class="fa fa-plus" aria-hidden="true"></i> بیشتر</a></li>
+                                foreach (var sideCats in Model.SidebarCategories.OrderBy(p => p.CategoryName).Skip(9))
+                                {
+                                    <li class="hidden"><a href="@Url.Action("Category","Home",new { Title = sideCats.CategoryName.Replace(' ','_')})">@sideCats.CategoryName</a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-12" id="primarySlider">
+                <div class="slider_area owl-carousel">
+                    @if(Model.Files.Any(p => p.RelateType == 16))
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="@Model.Files.FirstOrDefault(p => p.RelateType == 16).FileUrl">
+                            <div class="slider_content">
+                                <h2> بروز ترین </h2>
+                                <h1> آمپلی فایر ها با قیمت مناسب </h1>
+                                <a class="button" href="@Url.Action("Category","Home",new { Title = "آمپلی_فایر"})"> خرید </a>
+                            </div>
+                        </div>
+                    }else
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="assets/img/slider/slider1.jpg">
+                            <div class="slider_content">
+                                <h2> بروز ترین </h2>
+                                <h1> آمپلی فایر ها با قیمت مناسب </h1>
+                                <a class="button" href="@Url.Action("Category","Home",new { Title = "آمپلی_فایر"})"> خرید </a>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Files.Any(p => p.RelateType == 17))
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="@Model.Files.FirstOrDefault(p => p.RelateType == 17).FileUrl">
+                            <div class="slider_content">
+                                <h2> معرفی برند </h2>
+                                <h1>محصولات کاروزریا را ببینید</h1>
+                                <a class="button" href="@Url.Action("Category","Home",new { Title = "بلندگو", BrandId = "CE87C67F-0E1D-4AEE-BB96-1FD94EE002AB"})"> خرید </a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="assets/img/slider/slider2.jpg">
+                            <div class="slider_content">
+                                <h2> معرفی برند </h2>
+                                <h1>محصولات کاروزریا را ببینید</h1>
+                                <a class="button" href="@Url.Action("Category","Home",new { Title = "بلندگو", BrandId = "CE87C67F-0E1D-4AEE-BB96-1FD94EE002AB"})"> خرید </a>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Files.Any(p => p.RelateType == 18))
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="@Model.Files.FirstOrDefault(p => p.RelateType == 18).FileUrl">
+                            <div class="slider_content">
+                                <h2>  مقالات ما</h2>
+                                <h1>از جدید ترین موضوعات مطلع شوید</h1>
+                                <a class="button" href="@Url.Action("Blog","Home")"> کلیک کنید </a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="single_slider d-flex align-items-center" style="background-size:contain;" data-bgimg="assets/img/slider/slider3.jpg">
+                            <div class="slider_content">
+                                <h2>  مقالات ما</h2>
+                                <h1>از جدید ترین موضوعات مطلع شوید</h1>
+                                <a class="button" href="@Url.Action("Blog","Home")"> کلیک کنید </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!--slider area end-->
+<!--shipping area start-->
+<section class="shipping_area mb-50">
+    <div class="container">
+        <div class=" row">
+            <div class="col-12">
+                <div class="shipping_inner">
+                    <div class="single_shipping">
+                        <div class="col-lg-12 d-flex">
+                            <div class="col-lg-3">
+                                <div class="shipping_icone">
+                                    <img src="assets/img/about/shipping1.png" alt="ارسال سریع">
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="shipping_content">
+                                    <h2>ارسال سریع</h2>
+                                    <p>ارسال محصولات به تمامی نقاط کشور</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="single_shipping">
+                        <div class="col-lg-12 d-flex">
+                            <div class="col-lg-3">
+                                <div class="shipping_icone">
+                                    <img src="assets/img/about/shipping2.png" alt="پشتیبانی 24 ساعته">
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="shipping_content">
+                                    <h2>پشتیبانی 24 ساعته</h2>
+                                    <p>در روز های کاری هفته</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="single_shipping">
+                        <div class="col-lg-12 d-flex">
+                            <div class="col-lg-3">
+                                <div class="shipping_icone">
+                                    <img src="assets/img/about/shipping3.png" alt="تخفیف ویژه استریو 8">
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="shipping_content">
+                                    <h2>تخفیف ویژه</h2>
+                                    <p>قیمت های مناسب محصولات</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="single_shipping">
+                        <div class="col-lg-12 d-flex">
+                            <div class="col-lg-3">
+                                <div class="shipping_icone">
+                                    <img src="assets/img/about/shipping4.png" alt="پرداخت امن">
+                                </div>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="shipping_content">
+                                    <h2>پرداخت امن</h2>
+                                    <p>دارای نشان نماد الکترونیک</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--shipping area end-->
+<!--product area start done-->
+<section class="product_area mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section_title">
+                    <h2><span>محصولات <strong>  ویژه</strong></span></h2>
+                    <ul class="product_tab_button nav" role="tablist">
+                        @foreach (var cat in Model.SpecialProducts.GroupBy(p => p.CategoryId).OrderBy(x => x.Key).Select(q => q.Key).Take(1).ToList())
+                        {
+                            <li>
+                                <a class="active" data-toggle="tab" href="@string.Format("#{0}",cat)" role="tab" aria-controls="@cat" aria-selected="true">@Model.SidebarCategories.FirstOrDefault(p => p.NidCategory == cat).CategoryName</a>
+                            </li>
+                        }
+                        @foreach (var cat in Model.SpecialProducts.GroupBy(p => p.CategoryId).OrderBy(x => x.Key).Select(q => q.Key).Skip(1).ToList())
+                        {
+                            <li>
+                                <a data-toggle="tab" href="@string.Format("#{0}",cat)" role="tab" aria-controls="@cat" aria-selected="false">@Model.SidebarCategories.FirstOrDefault(p => p.NidCategory == cat).CategoryName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="tab-content">
+            @foreach (var cat in Model.SpecialProducts.GroupBy(p => p.CategoryId).OrderBy(x => x.Key).Select(q => q.Key).Take(1).ToList())
+            {
+                <div class="tab-pane fade show active" id="@cat" role="tabpanel">
+                    <div class="product_carousel product_column5 owl-carousel">
+                        @for (var i = 0; i < Model.SpecialProducts.Where(p => p.CategoryId == cat).Count() / 2; i++)
+                        {
+                            <div class="single_product_list">
+                                @foreach (var prd in Model.SpecialProducts.Where(p => p.CategoryId == cat).Skip(i * 2).Take(2))
+                                {
+                                    <div class="single_product">
+                                        <div class="product_name">
+                                            <h3><a href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})">@prd.ProductName</a></h3>
+                                            <p class="manufacture_product"><a href="@Url.Action("Category","Home",new { Title = prd.Category.CategoryName.Replace(' ','_'), BrandId = prd.BrandId.ToString()})"> @prd.Brand.BrandName </a></p>
+                                        </div>
+                                        <div class="product_thumb">
+                                            @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                            {
+                                                <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl" alt="@prd.ProductName.Replace(' ','_')"></a>
+                                            }
+                                            else
+                                            {
+                                                <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                            }
+                                            @*                                            <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product7.jpg" alt=""></a>*@
+                                            <div class="label_product">
+                                                <span class="label_sale">@prd.OffPercentage %-</span>
+                                            </div>
+
+                                            <div class="action_links">
+                                                <ul>
+                                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavorites(event,'@prd.NidProduct')" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavoritesAlert(event)" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="product_content">
+                                            <div class="product_ratings">
+                                                <ul>
+                                                    @if (prd.Rating != null)
+                                                    {
+                                                        @for (int j = (int)prd.Rating; j > 0; j--)
+                                                        {
+                                                            <li><i class="ion-star" style="color:#ffd54c;"></i></li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <div class="product_footer d-flex align-items-center">
+                                                @if (prd.AvailableCount > 0)
+                                                {
+                                                    <div class="price_box">
+                                                        <span class="regular_price">@String.Format("{0:n0} تومان", prd.Price)</span>
+                                                        @if (prd.OffPercentage > 0)
+                                                        {
+                                                            <span class="old_price">@String.Format("{0:n0} تومان", prd.PriceWithoutOff)</span>
+                                                        }
+                                                    </div>
+                                                    <div class="add_to_cart">
+                                                        @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                        {
+                                                            @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" onclick="AddToCartAlert(event)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                        }
+                                                    </div>
+                                                }else
+                                                {
+                                                    <div class="price_box">
+                                                        <span class="regular_price">ناموجود</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @foreach (var cat in Model.SpecialProducts.GroupBy(p => p.CategoryId).OrderBy(x => x.Key).Select(q => q.Key).Skip(1).ToList())
+            {
+                <div class="tab-pane fade" id="@cat" role="tabpanel">
+                    <div class="product_carousel product_column5 owl-carousel">
+                        @for (var i = 0; i < Model.SpecialProducts.Where(p => p.CategoryId == cat).Count() / 2; i++)
+                        {
+                            <div class="single_product_list">
+                                @foreach (var prd in Model.SpecialProducts.Where(p => p.CategoryId == cat).Skip(i * 2).Take(2))
+                                {
+                                    <div class="single_product">
+                                        <div class="product_name">
+                                            <h3><a href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})">@prd.ProductName</a></h3>
+                                            <p class="manufacture_product"><a href="@Url.Action("Category","Home",new { Title = prd.Category.CategoryName.Replace(' ','_'), BrandId = prd.BrandId.ToString()})"> @prd.Brand.BrandName </a></p>
+                                        </div>
+                                        <div class="product_thumb">
+                                            @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                            {
+                                                <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl" alt="@prd.ProductName.Replace(' ','_')"></a>
+                                            }
+                                            else
+                                            {
+                                                <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                            }
+                                            @*                                            <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product7.jpg" alt=""></a>*@
+                                            <div class="label_product">
+                                                <span class="label_sale">@prd.OffPercentage %-</span>
+                                            </div>
+
+                                            <div class="action_links">
+                                                <ul>
+                                                    @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavorites(event,'@prd.NidProduct')" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="wishlist"><a href="#" onclick="AddToFavoritesAlert(event)" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="product_content">
+                                            <div class="product_ratings">
+                                                <ul>
+                                                    @if (prd.Rating != null)
+                                                    {
+                                                        @for (int j = (int)prd.Rating; j > 0; j--)
+                                                        {
+                                                            <li><i class="ion-star" style="color:#ffd54c;"></i></li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <div class="product_footer d-flex align-items-center">
+                                                @if (prd.AvailableCount > 0)
+                                                {
+                                                    <div class="price_box">
+                                                        <span class="regular_price">@String.Format("{0:n0} تومان", prd.Price)</span>
+                                                        @if (prd.OffPercentage > 0)
+                                                        {
+                                                            <span class="old_price">@String.Format("{0:n0} تومان", prd.PriceWithoutOff)</span>
+                                                        }
+                                                    </div>
+                                                    <div class="add_to_cart">
+                                                        @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                                        {
+                                                            @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#" onclick="AddToCartAlert(event)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="price_box">
+                                                        <span class="regular_price">ناموجود</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<!--product area end-->
+<!--featured categories area start done-->
+<section class="featured_categories mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section_title">
+                    <h2><span> <strong> گلچین </strong>دسته بندی</span></h2>
+                </div>
+                <div class="featured_container">
+                    <div class="featured_carousel featured_column3 owl-carousel">
+                        @for (var i = 0; i <= Model.SpecialCategories.Count() / 2; i++)
+                        {
+                            <div class="single_items">
+                                @foreach (var cat in Model.SpecialCategories.OrderBy(p => p.CategoryName).Skip(i * 2).Take(2))
+                                {
+                                    <div class="single_featured">
+                                        <div class="featured_thumb">
+                                            @if (Model.Files.Any(p => p.RelateId == cat.NidCategory && p.RelateType == 2))
+                                            {
+                                                <a href="@Url.Action("Category","Home",new {Title = cat.CategoryName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == cat.NidCategory && p.RelateType == 2).FileUrl" alt="@cat.CategoryName.Replace(' ','_')"></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Category","Home",new {Title = cat.CategoryName.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                            }
+                                        </div>
+                                        <div class="featured_content">
+                                            <h3 class="product_name"><a href="@Url.Action("Category","Home",new {Title = cat.CategoryName.Replace(' ','_')})"> @cat.CategoryName </a></h3>
+                                            <div class="sub_featured">
+                                                <ul>
+                                                    @foreach (var typ in cat.Types)
+                                                    {
+                                                        <li><a href="@Url.Action("Category","Home",new {Title = cat.CategoryName.Replace(' ','_'), TypeId = typ.NidType.ToString()})"> @typ.TypeName </a></li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <a class="view_more" href="@Url.Action("Category","Home",new {Title = cat.CategoryName.Replace(' ','_')})">خرید</a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--featured categories area end-->
+<!--banner area start-->
+<section class="banner_area mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="banner_container">
+                    <div class="single_banner banner_fullwidth" style="width:100%;">
+                        <div class="banner_thumb">
+                            @if(Model.Files.Any(p => p.RelateType == 22))
+                            {
+                                <a href="@Url.Action("Category","Home",new { Title = "بلندگو"})"><img src="@Model.Files.FirstOrDefault(p => p.RelateType == 22).FileUrl" alt="بلندگو استریو 8"></a>
+                            }else
+                            {
+                                <a href="@Url.Action("Category","Home",new { Title = "بلندگو"})"><img src="assets/img/bg/banner1.jpg" alt="بلندگو استریو 8"></a>
+                            }
+                            <div class="banner_text">
+                                <h3>بلندگو ماشین</h3>
+                                <h2>کیفیت بالای صدای آهنگ</h2>
+                                <a href="@Url.Action("Category","Home",new { Title = "بلندگو"})">اکنون خرید کنید</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="single_banner">
+                        <div class="banner_thumb">
+                            @if (Model.Files.Any(p => p.RelateType == 23))
+                            {
+                                <a href="@Url.Action("Category","Home",new { Title = "هدفون"})"><img src="@Model.Files.FirstOrDefault(p => p.RelateType == 23).FileUrl" alt="هدفون استریو 8"></a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Category","Home",new { Title = "هدفون"})"><img src="assets/img/bg/banner2.jpg" alt="هدفون استریو 8"></a>
+                            }
+                            <div class="banner_text">
+                                <h3>هدفون</h3>
+                                <h2>برند سونی</h2>
+                                <a href="@Url.Action("Category","Home",new { Title = "هدفون"})">اکنون خرید کنید</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--banner area end-->
+<!--product area start done-->
+<section class="product_area mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section_title">
+                    <h2><span> <strong>تخفیف</strong> ویژه</span></h2>
+                </div>
+                <div class="product_carousel product_column5 owl-carousel">
+                    @foreach (var prd in Model.OffProducts)
+                    {
+                        <div class="single_product">
+                            <div class="product_name">
+                                <h3><a href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})">@prd.ProductName</a></h3>
+                                <p class="manufacture_product"><a href="@Url.Action("Category","Home",new { Title = prd.Category.CategoryName.Replace(' ','_'), BrandId = prd.BrandId.ToString()})"> @prd.Brand.BrandName </a></p>
+                            </div>
+                            <div class="product_thumb">
+                                @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                {
+                                    <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl" alt="@prd.ProductName.Replace(' ','_')"></a>
+                                }
+                                else
+                                {
+                                    <a class="primary_img" href="@Url.Action("Product","Home",new { Title = prd.ProductName.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                }
+                                @*                                            <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product7.jpg" alt=""></a>*@
+                                <div class="label_product">
+                                    <span class="label_sale">@prd.OffPercentage %-</span>
+                                </div>
+
+                                <div class="action_links">
+                                    <ul>
+                                        @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                        {
+                                            <li class="wishlist"><a href="#" onclick="AddToFavorites(event,'@prd.NidProduct')" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="wishlist"><a href="#" onclick="AddToFavoritesAlert(event)" title="افزودن به علاقه مندی ها"><span class="lnr lnr-heart"></span></a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="product_content">
+                                <div class="product_ratings">
+                                    <ul>
+                                        @if (prd.Rating != null)
+                                        {
+                                            @for (int j = (int)prd.Rating; j > 0; j--)
+                                            {
+                                                <li><i class="ion-star" style="color:#ffd54c;"></i></li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="product_footer d-flex align-items-center">
+                                    @if (prd.AvailableCount > 0)
+                                    {
+                                        <div class="price_box">
+                                            <span class="regular_price">@String.Format("{0:n0} تومان", prd.Price)</span>
+                                            @if (prd.OffPercentage > 0)
+                                            {
+                                                <span class="old_price">@String.Format("{0:n0} تومان", prd.PriceWithoutOff)</span>
+                                            }
+                                        </div>
+                                        <div class="add_to_cart">
+                                            @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                            {
+                                                @if (Model.Files.Any(p => p.RelateId == prd.NidProduct && p.RelateType == 6))
+                                                {
+                                                    <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '@Model.Files.FirstOrDefault(p => p.RelateId == prd.NidProduct  && p.RelateType == 6).FileUrl', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="#" onclick="AddToCart(event, '@prd.ProductName', '@prd.Price', '', '@prd.NidProduct',1)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <a href="#" onclick="AddToCartAlert(event)" title="افزودن به سبد خرید"><span class="lnr lnr-cart"></span></a>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="price_box">
+                                            <span class="regular_price">ناموجود</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!--product area end-->
+<!--banner area start-->
+<section class="banner_area mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="single_banner banner_fullwidth">
+                    <div class="banner_thumb">
+                        @if (Model.Files.Any(p => p.RelateType == 24))
+                        {
+                            <a href="@Url.Action("Bargain","Home")"><img src="@Model.Files.FirstOrDefault(p => p.RelateType == 24).FileUrl" alt="اکنون خرید کنید استریو 8"></a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Bargain","Home")"><img src="assets/img/bg/banner3.jpg" alt="اکنون خرید کنید استریو 8"></a>
+                        }
+                        <div class="banner_text">
+                            <h2>بهترین پیشنهاد ها</h2>
+                            <h3>ضمانت محصول</h3>
+                            <p>خرید آنلاین</p>
+                            <a href="@Url.Action("Bargain","Home")"> اکنون خرید کنید </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@if (Model.LatestBlogs.Any())
+{
+    <!--blog area start-->
+    <section class="blog_section mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section_title">
+                        <h2><span> <strong> مطالب </strong>اخیر </span></h2>
+                    </div>
+                    <div class="blog_carousel blog_column4 owl-carousel">
+                        @foreach (var blg in Model.LatestBlogs)
+                        {
+                            <div class="single_blog">
+                                <div class="blog_thumb">
+                                    @if (Model.Files.Any(p => p.RelateId == blg.NidBlog && p.RelateType == 10))
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == blg.NidBlog && p.RelateType == 10).FileUrl" alt="@blg.Title.Replace(' ','_')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                    }
+                                </div>
+                                <div class="blog_content">
+                                    <div class="date_post">
+                                        <span>@blg.PersianCreateDate.Substring(0,10)</span>
+                                    </div>
+                                    <h3><a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})">@blg.Title</a></h3>
+                                    <div class="blog_desc">
+                                        <p>
+                                            @Html.Raw(blg.Description)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--blog area end-->
+}
+@section Scripts
+{
+    <script type="text/javascript">
+    $(function()
+    {
+    });
+    </script>
+}

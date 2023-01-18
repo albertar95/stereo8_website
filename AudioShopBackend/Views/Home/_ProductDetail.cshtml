@@ -1,0 +1,144 @@
+﻿@model AudioShopBackend.Models.Product
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            نام محصول
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.ProductName)
+        </dd>
+        <dt class="col-sm-2">
+            دسته بندی
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Category.CategoryName)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            نوع
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Type.TypeName)
+        </dd>
+        <dt class="col-sm-2">
+            برند
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Brand.BrandName)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            تاریخ ایجاد
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.PersianCreateDate)
+        </dd>
+        <dt class="col-sm-2">
+            تاریخ آخرین تغییر
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.PersianLastModified)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            قیمت
+        </dt>
+        <dd class="col-sm-3">
+            @String.Format("{0:n0} تومان", Model.Price)
+        </dd>
+        <dt class="col-sm-2">
+            درصد تخفیف
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.OffPercentage)&nbsp;%
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            تعداد موجود
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.AvailableCount)
+        </dd>
+        <dt class="col-sm-2">
+            کاربر ایجاد کننده
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.User.Username)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            وزن محصول
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Weight) KG
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            اولویت
+        </dt>
+        <dd class="col-sm-3">
+            @switch (Model.Priority)
+            {
+                case 1:
+                    <p>پایین ترین</p>
+                    break;
+                case 2:
+                    <p>پایین</p>
+                    break;
+                case 3:
+                <p>متوسط</p>
+                    break;
+                case 4:
+                    <p>بالا</p>
+                    break;
+                case 5:
+                    <p>بالا ترین</p>
+                    break;
+                default:
+                    <p></p>
+                    break;
+            }
+        </dd>
+        <dt class="col-sm-2">
+            امتیاز بندی محصول
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Rating) ستاره
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            توضیحات
+        </dt>
+        <dd class="col-sm-3">
+            @Html.Raw(Model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            کلیدواژه ها
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Keywords)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            مشخصات محصول
+        </dt>
+        <dd class="col-sm-3">
+            @Html.Raw(Model.Specification)
+        </dd>
+        <dt class="col-sm-2">
+            توضیحات تکمیلی
+        </dt>
+        <dd class="col-sm-3">
+            @Html.Raw(Model.DetailDesc)
+        </dd>
+    </dl>
+</div>

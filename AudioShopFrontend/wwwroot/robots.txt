@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /StatusCodes
+Sitemap: http://stereo8.ir/sitemap.xml

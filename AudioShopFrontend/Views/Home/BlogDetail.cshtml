@@ -1,0 +1,318 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model AudioShopFrontend.ViewModels.BlogDetailViewModel
+@{
+    ViewData["Title"] = Model.Blog.Title;
+    ViewData["Desc"] = Model.Blog.Description;
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("BlogDetail","Home",new {Title = Model.Blog.Title.Replace(' ','_')}));
+    ViewData["Typo"] = "article";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    @if (Model.Blog.LastModified != null)
+    {
+        <meta property="og:updated_time" content="@Model.Blog.LastModified" />
+    }
+    else
+    {
+        <meta property="og:updated_time" content="@Model.Blog.CreateDate" />
+    }
+    @if (Model.Files.Any(p => p.RelateId == Model.Blog.NidBlog && p.RelateType == 13))
+    {
+        <meta property="og:image" content="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Blog.NidBlog && p.RelateType == 13).FileUrl" />
+        <meta name="twitter:image" content="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Blog.NidBlog && p.RelateType == 13).FileUrl" />
+        <meta property="og:image:width" content="825" />
+        <meta property="og:image:height" content="567" />
+    }else
+    {
+        <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta property="og:image:width" content="1920" />
+        <meta property="og:image:height" content="1080" />
+    }
+    <meta property="og:image:alt" content="@Model.Blog.Title.Replace(' ','_')" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+    @if (Model.Blog.LastModified != null)
+    {
+        <meta property="article:published_time" content="@Model.Blog.PersianCreateDate" />
+        <meta property="article:modified_time" content="@Model.Blog.PersianLastModified" />
+    }
+    else
+    {
+        <meta property="article:published_time" content="@Model.Blog.PersianCreateDate" />
+        <meta property="article:modified_time" content="@Model.Blog.PersianCreateDate" />
+    }
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li><a href="@Url.Action("BlogPost","Home",new {BlogType = 1, Title = Model.Blog.Category.CategoryName.Replace(' ','_')})">@Model.Blog.Category.CategoryName</a></li>
+                        <li>@Model.Blog.Title</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv2" hidden>
+                <p id="errorMessage2"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--blog body area start-->
+<div class="blog_details blog_padding mt-23">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12">
+                <!--blog grid area start-->
+                <div class="blog_details_wrapper">
+                    <div class="blog_thumb">
+                        <a href="#">
+                            @if (Model.Files.Any(p => p.RelateId == Model.Blog.NidBlog && p.RelateType == 13))
+                            {
+                                <img src="@Model.Files.FirstOrDefault(p => p.RelateId == Model.Blog.NidBlog && p.RelateType == 13).FileUrl" alt="@Model.Blog.Title.Replace(' ','_')">
+                            }
+                            else
+                            {
+                                <img src="" alt="بدون عکس" />
+                            }
+                        </a>
+                    </div>
+                    <div class="blog_content">
+                        <h3 class="post_title"> @Model.Blog.Title</h3>
+                        <div class="post_meta">
+                            <span><i class="ion-person"></i> پست شده توسط</span>
+                            <span><a href="#"> @Model.Blog.User.FirstName&nbsp;@Model.Blog.User.LastName</a></span>
+                            <span>|</span>
+                            <span>
+                                <i class="fa fa-calendar" aria-hidden="true"></i> @Model.Blog.PersianCreateDate.Substring(0,10)
+                            </span>
+                        </div>
+                        <div class="post_content">
+                            <p class="textalign">
+                                @Html.Raw(Model.Blog.Contents)
+                            </p>
+                        </div>
+                        <div class="entry_content">
+                            <div class="post_meta">
+                                <span>برچسب ها:</span>
+                                @if (Model.Blog.Keywords != null)
+                                {
+                                    @foreach (var kw in Model.Blog.Keywords.Split(','))
+                                    {
+                                        <span><a href="@Url.Action("BlogPost","Home",new {BlogType = 2, Title = kw.Replace(' ','_')})">@kw</a></span>
+                                    }
+                                }
+                            </div>
+
+                            <div class="social_sharing">
+                                <h3>اشتراک گذاری این پست</h3>
+                                <ul>
+                                    <li><a class="twitter" href="@string.Format("https://twitter.com/share?url=http://stereo8.ir{0}",Url.Action("BlogDetail","Home",new { Title = Model.Blog.Title.Replace(' ','_')}))" title="توییتر"><i class="fa fa-twitter"></i> توییتر</a></li>
+                                    <li><a class="facebook" href="@string.Format("tg://msg/?text=http://stereo8.ir{0}",Url.Action("BlogDetail","Home",new { Title = Model.Blog.Title.Replace(' ','_')}))" title="تلگرام"><i class="fa fa-telegram"></i> تلگرام</a></li>
+                                    <li><a class="Whatsapp" href="@string.Format("whatsapp://send/?text=http://stereo8.ir{0}",Url.Action("BlogDetail","Home",new { Title = Model.Blog.Title.Replace(' ','_')}))" title=" واتس"><i class="fa fa-whatsapp"></i> واتس</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="related_posts">
+                        <h3>مطالب مرتبط</h3>
+                        <div class="row">
+                            @foreach (var blg in Model.RelatedBlogs)
+                            {
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="single_related">
+                                        <div class="related_thumb">
+                                            @if (Model.Files.Any(p => p.RelateId == blg.NidBlog && p.RelateType == 10))
+                                            {
+                                                <img src="@Model.Files.FirstOrDefault(p => p.RelateId == blg.NidBlog && p.RelateType == 10).FileUrl" alt="@blg.Title.Replace(' ','_')">
+                                            }
+                                            else
+                                            {
+                                                <img src="" alt="بدون عکس" />
+                                            }
+                                        </div>
+                                        <div class="related_content">
+                                            <h3><a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})">@blg.Title</a></h3>
+                                            <span>
+                                                <i class="fa fa-calendar" aria-hidden="true"></i>@blg.PersianCreateDate.Substring(0,10)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="comments_box">
+                        <h3>@Model.Blog.BlogComments.Count نظر</h3>
+                        @foreach (var cmt in Model.Blog.BlogComments)
+                        {
+                            <div class="comment_list">
+                                <div class="comment_thumb">
+                                    <img src="assets/img/blog/comment3.png.jpg" alt="" />
+                                </div>
+                                <div class="comment_content">
+                                    <div class="comment_meta">
+                                        <h5>@cmt.User.FirstName&nbsp;@cmt.User.LastName</h5>
+                                        <span>@cmt.PersianCreateDate.Substring(0,10)</span>
+                                    </div>
+                                    <p>
+                                        @cmt.CommentText
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="comments_form">
+                        <h3>دیدگاهتان را با ما در میان بگذارید</h3>
+                        <p>
+                            ما هرگز آدرس ایمیل شما را با شخص ثالث به اشتراک نمی گذاریم
+                        </p>
+                        <form action="AddBlogComment">
+                            <input id="NidComment" name="NidComment" hidden />
+                            @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                            {
+                                <input id="UserId" name="UserId" value="@AudioShopFrontend.Helpers.UsersAuth.GetSpecificClaim(HttpContextAccessor.HttpContext.Request.Cookies["Stereo8Login"],2)" hidden />
+                            }
+                            else
+                            {
+                                <input id="UserId" name="UserId" value="@Guid.Empty" hidden />
+                            }
+                            <input id="BlogId" name="BlogId" value="@Model.Blog.NidBlog" hidden />
+                            <input id="State" name="State" hidden />
+                            <input id="CreateDate" name="CreateDate" hidden />
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="review_comment">نظر شما   </label>
+                                    <textarea name="CommentText" id="CommentText" required></textarea>
+                                </div>
+                                @if (HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("Stereo8Login"))
+                                {
+                                    <div class="col-lg-6 col-md-6">
+                                        <label for="author">نام</label>
+                                        <input id="author" type="text" value="@AudioShopFrontend.Helpers.UsersAuth.GetSpecificClaim(HttpContextAccessor.HttpContext.Request.Cookies["Stereo8Login"],3)">
+
+                                    </div>
+                                    <div class="col-lg-6 col-md-6">
+                                        <label for="email">ایمیل</label>
+                                        <input id="email" type="email" value="@AudioShopFrontend.Helpers.UsersAuth.GetSpecificClaim(HttpContextAccessor.HttpContext.Request.Cookies["Stereo8Login"],1)">
+                                    </div>
+                                }else
+                                {
+                                    <div class="col-lg-6 col-md-6">
+                                        <label for="author">نام</label>
+                                        <input id="author" type="text">
+
+                                    </div>
+                                    <div class="col-lg-6 col-md-6">
+                                        <label for="email">ایمیل</label>
+                                        <input id="email" type="email">
+                                    </div>
+                                }
+                            </div>
+                            <button class="button" type="submit">ارسال نظر</button>
+                        </form>
+                    </div>
+                </div>
+                <!--blog grid area start-->
+            </div>
+            <div class="col-lg-3 col-md-12">
+                <div class="blog_sidebar_widget">
+                    <div class="widget_list widget_search">
+                        <h3>جستجو</h3>
+                        <form action="#">
+                            <input placeholder="جستجو..." type="text" required />
+                            <button type="submit">جستجو</button>
+                        </form>
+                    </div>
+                    <div class="widget_list widget_tag">
+                        <h3>برچسب محصولات</h3>
+                        <div class="tag_widget">
+                            <ul>
+                                @if(Model.Keywords != null)
+                                {
+                                    @foreach (var kw in Model.Keywords)
+                                    {
+                                        <li><a href="@Url.Action("BlogPost","Home",new {BlogType = 2, Title = kw.Replace(' ','_')})">@kw</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="widget_list widget_post">
+                        <h3>مطالب اخیر</h3>
+                        @foreach (var blg in Model.LatestBlog)
+                        {
+                            <div class="post_wrapper">
+                                <div class="post_thumb">
+                                    @if (Model.Files.Any(p => p.RelateId == blg.NidBlog && p.RelateType == 10))
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == blg.NidBlog && p.RelateType == 10).FileUrl" alt="@blg.Title.Replace(' ','_')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="" alt="بدون عکس"></a>
+                                    }
+                                </div>
+                                <div class="post_info">
+                                    <h3><a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})">@blg.Title</a></h3>
+                                    <span>@blg.PersianCreateDate.Substring(0,10) </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="widget_list widget_categories">
+                        <h3>دسته بندی</h3>
+                        <ul>
+                            @foreach (var cat in Model.BlogCategories)
+                            {
+                                <li><a href="@Url.Action("BlogPost","Home",new {BlogType = 1, Title = cat.CategoryName.Replace(' ','_')})">@cat.CategoryName</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--blog section area end-->
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["BlogCommentSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["BlogCommentSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 60000);
+            }
+            if ('@TempData["BlogCommentError"]' != "") {
+                $("#errorDiv2").removeAttr('hidden');
+                $("#errorMessage2").text('@TempData["BlogCommentError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv2").attr('hidden', 'hidden');
+                }, 60000);
+            }
+        });
+    </script>
+}

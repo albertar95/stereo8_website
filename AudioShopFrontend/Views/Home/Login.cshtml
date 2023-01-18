@@ -1,0 +1,257 @@
+﻿
+@{
+    ViewData["Title"] = "ورود / ثبت نام";
+    ViewData["Desc"] = "ورود کاربران - وب سایت استریو 8";
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("Login", "Home"));
+    ViewData["Typo"] = "website";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta property="og:updated_time" content="2022-12-09T22:28:56+03:30" />
+    <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="وبسایت استریو 8" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+    <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="index.html">صفحه اصلی</a></li>
+                        <li>ورود</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv2" hidden>
+                <p id="errorMessage2"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!-- customer login start -->
+<div class="customer_login mt-32">
+    <div class="container">
+        <div class="row">
+            <!--login area start-->
+            <div class="col-lg-6 col-md-6">
+                <div class="account_form">
+                    <h2>ورود</h2>
+                    <form action="SubmitLogin">
+                        <p>
+                            <label>نام کاربری یا ایمیل<span>*</span></label>
+                            <input type="text" name="Username" autofocus required>
+                        </p>
+                        <p>
+                            <label>کلمه عبور<span>*</span></label>
+                            <input type="password" name="Password" required>
+                        </p>
+                        <div class="login_submit">
+                            <a href="#" id="ForgetPassword">رمز عبور را فراموش کرده اید؟</a>
+                            <label for="remember">
+                                <input id="remember" type="checkbox" name="Remember" onclick="$(this).attr('value', this.checked ? 'true' : 'false')" value="false">
+                                مرا بخاطر بسپار
+                            </label>
+                            <button type="submit">ورود</button>
+
+                        </div>
+
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="warningDiv" hidden>
+                        <p id="warningMessage"></p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv" hidden>
+                        <p id="errorMessage"></p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--login area start-->
+            <!--register area start-->
+            <div class="col-lg-6 col-md-6">
+                <div class="account_form register">
+                    <h2>ثبت نام</h2>
+                    <form action="Register">
+                        <input type="text" name="NidUser" hidden />
+                        <p>
+                            <label>نام <span>*</span></label>
+                            <input type="text" name="FirstName" required>
+                        </p>
+                        <p>
+                            <label>نام خانوادگی <span>*</span></label>
+                            <input type="text" name="LastName" required>
+                        </p>
+                        <p>
+                            <label>آدرس ایمیل <span>*</span></label>
+                            <input type="email"  name="Username" required>
+                        </p>
+                        <p>
+                            <label>کلمه عبور<span>*</span></label>
+                            <input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" name="Password" oninput="checkPassword(this.value,1)" required>
+                            <div class="alert alert-warning fade show" role="alert" id="PasswordWarnDiv1" hidden>
+                                <p id="PasswordWarnMessage" style="font-weight:bold;">
+                                    کلمه عبور می بایست شرایط زیر را داشته باشد :
+                                    <ul style="padding-right:1rem;list-style:inherit;">
+                                        <li>حداقل شش کاراکتر باشد</li>
+                                        <li>شامل عدد باشد</li>
+                                        <li>شامل حروف کوچک و بزرگ باشد</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </p>
+                        <div class="login_submit">
+                            <button type="submit">ثبت نام</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--register area end-->
+        </div>
+    </div>
+</div>
+<!-- customer login end -->
+<div class="modal fade" id="recoverPassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">بازیابی کلمه عبور</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="account_login_form">
+                    <form action="#">
+                        <p>ایمیل خود را وارد نمایید تا فرم بازیابی کلمه عبور برای شما ارسال شود</p>
+                        <label>ایمیل</label>
+                        <input type="email" id="RecoverEmail" autofocus required>
+                        <div class="save_button primary_btn default_button d-flex">
+                            <button onclick="ForgetPassword(event)">ارسال فرم بازیابی</button>
+                            <p id="waitAlert" style="color:maroon;font-weight:bold;" hidden>لطفا منتظر بمانید</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <div class="col-12 mt-3">
+                    <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="modalErrorDiv" hidden>
+                        <p id="modalErrorMessage"></p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["LoginError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["LoginError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["LoginWarning"]' != "") {
+                $("#warningDiv").removeAttr('hidden');
+                $("#warningMessage").text('@TempData["LoginWarning"]');
+                window.setTimeout(function () {
+                    $("#warningDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["UserActivateSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["UserActivateSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["UserActivateError"]' != "") {
+                $("#errorDiv2").removeAttr('hidden');
+                $("#errorMessage2").text('@TempData["UserActivateError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv2").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["UserExistError"]' != "") {
+                $("#errorDiv2").removeAttr('hidden');
+                $("#errorMessage2").text('@TempData["UserExistError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv2").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+            $("#ForgetPassword").click(function(e)
+            {
+                e.preventDefault();
+                $("#recoverPassModal").modal();
+            });
+        });
+        function ForgetPassword(e) {
+            e.preventDefault();
+            $("#waitAlert").removeAttr('hidden');
+            $.ajax(
+                {
+                    url: '@Url.Action("ForgetPassword","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: { Username: $("#RecoverEmail").val() },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#RecoverEmail").val('');
+                            $("#recoverPassModal").modal('hide');
+                            $("#successDiv").removeAttr('hidden');
+                            $("#successMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#successDiv").attr('hidden', 'hidden');
+                            }, 30000);
+                        } else {
+                            $("#modalErrorDiv").removeAttr('hidden');
+                            $("#modalErrorMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#modalErrorDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                        }
+                    },
+                    error: function () { }
+                });
+            $("#waitAlert").attr('hidden','hidden');
+        }
+    </script>
+}

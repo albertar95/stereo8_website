@@ -1,0 +1,71 @@
+﻿@model AudioShopBackend.Models.User
+
+@{
+    ViewData["Title"] = "ویرایش کاربر";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">ویرایش کاربر</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="SubmitEditUser">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="NidUser" value="@Model.NidUser" />
+                    <input type="hidden" asp-for="Password" value="@Model.Password" />
+                    <input type="hidden" asp-for="CreateDate" value="@Model.CreateDate" />
+                    <input type="hidden" asp-for="LastLoginDate" value="@Model.LastLoginDate" />
+                    <input type="hidden" asp-for="ZipCode" value="@Model.ZipCode" />
+                    <input type="hidden" asp-for="Tel" value="@Model.Tel" />
+                    <input type="hidden" asp-for="Address" value="@Model.Address" />
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label">نام</label>
+                        <input asp-for="FirstName" class="form-control" value="@Model.FirstName" autofocus />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label">نام خانوادگی</label>
+                        <input asp-for="LastName" class="form-control" value="@Model.LastName" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Username" class="control-label">نام کاربری</label>
+                        <input asp-for="Username" class="form-control" value="@Model.Username" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check mr-4">
+                        <label class="form-check-label">
+                            @if(Model.IsDisabled)
+                            {
+                                <input class="form-check-input" type="checkbox" value="true" onclick="$(this).attr('value', this.checked ? 'true' : 'false')" checked asp-for="IsDisabled" />
+                            }else
+                            {
+                                <input class="form-check-input" type="checkbox" value="false" onclick="$(this).attr('value', this.checked ? 'true' : 'false')" asp-for="IsDisabled" />
+                            }
+                            غیرفعال
+                        </label>
+                    </div>
+                    <div class="form-group form-check mr-4">
+                        <label class="form-check-label">
+                            @if(Model.IsAdmin)
+                            {
+                                <input class="form-check-input" type="checkbox" value="true" onclick="$(this).attr('value', this.checked ? 'true' : 'false')" checked asp-for="IsAdmin" />
+                            }else
+                            {
+                                <input class="form-check-input" type="checkbox" value="false" onclick="$(this).attr('value', this.checked ? 'true' : 'false')" asp-for="IsAdmin" />
+                            }
+                            کاربر ادمین
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="ذخیره" class="btn btn-primary" />
+                        <a href="@Url.Action("Users","Home")" class="btn btn-secondary mr-2">بازگشت</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>

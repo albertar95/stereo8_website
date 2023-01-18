@@ -1,0 +1,62 @@
+﻿@model AudioShopBackend.Models.Blog
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            عنوان
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            دسته بندی
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Category.CategoryName)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            تاریخ ایجاد
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.PersianCreateDate)
+        </dd>
+        <dt class="col-sm-2">
+            تاریخ آخرین تغییر
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.PersianLastModified)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            نویسنده
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.User.FirstName)&nbsp; @Html.DisplayFor(model => model.User.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            کلیدواژه ها
+        </dt>
+        <dd class="col-sm-3">
+            @Html.DisplayFor(model => model.Keywords)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            توضیحات
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            متن مقاله
+        </dt>
+        <dd class="col-sm-8">
+            @Html.DisplayFor(model => model.Contents)
+        </dd>
+    </dl>
+</div>

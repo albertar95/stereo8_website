@@ -1,0 +1,132 @@
+﻿@model AudioShopBackend.Models.Order
+
+@{
+    ViewData["Title"] = "جزییات سفارش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card shadow mb-4">
+    <div class="card-header py-4">
+        <h6 class="m-0 font-weight-bold text-primary">جزییات سفارش</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <h4>اطلاعات مشتری</h4>
+            <hr />
+            <div class="row col-sm-12">
+                <label class="col-sm-2">
+                    نام
+                </label>
+                <label class="col-sm-4">
+                    @Html.DisplayFor(model => model.FirstName)
+                </label>
+                <label class="col-sm-2">
+                    نام خانوادگی
+                </label>
+                <label class="col-sm-4">
+                    @Html.DisplayFor(model => model.LastName)
+                </label>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    استان
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.StateId)
+                </div>
+                <div class="col-sm-2">
+                    شهر
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.CityId)
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    آدرس
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.Address)
+                </div>
+                <div class="col-sm-2">
+                    کدپستی
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.ZipCode)
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    شماره تماس
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.Tel)
+                </div>
+                <div class="col-sm-2">
+                    ایمیل
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.Email)
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    کدملی
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.MelliCode)
+                </div>
+                <div class="col-sm-2">
+                    نام کاربری
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.User.Username)
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <h4>اطلاعات سفارش</h4>
+            <hr />
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    تاریخ
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.PersianCreateDate)
+                </div>
+                <div class="col-sm-2">
+                    مبلغ کل
+                </div>
+                <div class="col-sm-4">
+                    @String.Format("{0:n0} تومان", Model.TotalPrice)
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    توضیحات
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.Description)
+                </div>
+                <div class="col-sm-2">
+                    تاریخ آخرین تغییر
+                </div>
+                <div class="col-sm-4">
+                    @Html.DisplayFor(model => model.PersianLastModified)
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="col-sm-2">
+                    محصولات
+                </div>
+                @foreach (var prd in Model.OrderDetails)
+                {
+                    <div class="col-sm-10">
+                        @prd.Product.ProductName
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

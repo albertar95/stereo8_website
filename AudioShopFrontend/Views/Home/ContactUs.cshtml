@@ -1,0 +1,131 @@
+﻿
+@{
+    ViewData["Title"] = "ارتباط با ما";
+    ViewData["Desc"] = "ارتباط با ما - استریو 8";
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("ContactUs", "Home"));
+    ViewData["Typo"] = "website";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta property="og:updated_time" content="2022-12-09T22:28:56+03:30" />
+    <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="وبسایت استریو 8" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+    <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>ارتباط ما</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv" hidden>
+                <p id="errorMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--contact map start-->
+<div class="contact_map mt-30">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="map-area">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d405.07282483592337!2d51.42010397952809!3d35.687278375153085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8e01d140d3cc07%3A0x4a1efd2b132997ad!2sstereo8.ir!5e0!3m2!1sen!2s!4v1669978746471!5m2!1sen!2s" style="border:0;width:100%;height:500px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--contact map end-->
+<!--contact area start-->
+<div class="contact_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <div class="contact_message content">
+                    <h3>ارتباط با ما</h3>
+                    <p>نظرات ارزشمندتان را با ما در میان بگذارید</p>
+                    <ul>
+                        <li><i class="fa fa-fax"></i> آدرس: خیابان فردوسی پاساژ 26 پلاک 214</li>
+                        <li><i class="fa fa-envelope-o"></i> <a href="#">@string.Format("info@srereo8.ir")</a></li>
+                        <li><i class="fa fa-phone"></i><a href="tel:+989354036003">09354036003</a> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="contact_message form">
+                    <h3>دیدگاهتان را با ما در میان بگذارید</h3>
+                    <form action="AddContactForm">
+                        <p>
+                            <label> نام </label>
+                            <input name="name" placeholder="نام *" type="text" required>
+                        </p>
+                        <p>
+                            <label> ایمیل</label>
+                            <input name="email" placeholder="ایمیل *" type="email" required>
+                        </p>
+                        <p>
+                            <label> موضوع</label>
+                            <input name="subject" placeholder="موضوع *" type="text" required>
+                        </p>
+                        <div class="contact_textarea">
+                            <label> متن نظر </label>
+                            <textarea placeholder="متن *" name="message" class="form-control2" required></textarea>
+                        </div>
+                        <button type="submit"> ارسال</button>
+                        <p class="form-messege"></p>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--contact area end-->
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["ContactSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["ContactSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["ContactError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["ContactError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+        });
+    </script>
+}

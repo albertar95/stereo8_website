@@ -1,0 +1,476 @@
+﻿@model AudioShopFrontend.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "پرداخت";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+{
+    <meta name="robots" content="nofollow, noindex" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>پرداخت</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+@if(Model.Order.NidOrder == Guid.Empty)
+{
+    <!--اکنون پرداخت کنیدpage section-->
+    <div class="Checkout_section mt-32">
+        <div class="container">
+            <div class="checkout_form">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <form id="FrmOrder" action="#">
+                            <h3>اطلاعات ارسال مرسوله</h3>
+                            <div class="row">
+                                <div class="col-lg-6 mb-20">
+                                    <label>نام<span>*</span></label>
+                                    <input type="text" name="FirstName" id="FirstName" value="@Model.User.FirstName" required />
+                                </div>
+                                <div class="col-lg-6 mb-20">
+                                    <label>نام خانوادگی<span>*</span></label>
+                                    <input type="text" name="LastName" id="LastName" value="@Model.User.LastName" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>شماره تماس</label>
+                                    <input type="text" name="Tel" id="Tel" value="@Model.User.Tel">
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label for="country">استان<span>*</span></label>
+                                    <select class="form-control" name="StateId" id="StateId" onChange="FindCities(this.value);" required>
+                                        <option value="0" selected>لطفا استان را انتخاب نمایید</option>
+                                        <option value="1">تهران</option>
+                                        <option value="2">گیلان</option>
+                                        <option value="3">آذربایجان شرقی</option>
+                                        <option value="4">خوزستان</option>
+                                        <option value="5">فارس</option>
+                                        <option value="6">اصفهان</option>
+                                        <option value="7">خراسان رضوی</option>
+                                        <option value="8">قزوین</option>
+                                        <option value="9">سمنان</option>
+                                        <option value="10">قم</option>
+                                        <option value="11">مرکزی</option>
+                                        <option value="12">زنجان</option>
+                                        <option value="13">مازندران</option>
+                                        <option value="14">گلستان</option>
+                                        <option value="15">اردبیل</option>
+                                        <option value="16">آذربایجان غربی</option>
+                                        <option value="17">همدان</option>
+                                        <option value="18">کردستان</option>
+                                        <option value="19">کرمانشاه</option>
+                                        <option value="20">لرستان</option>
+                                        <option value="21">بوشهر</option>
+                                        <option value="22">کرمان</option>
+                                        <option value="23">هرمزگان</option>
+                                        <option value="24">چهارمحال و بختیاری</option>
+                                        <option value="25">یزد</option>
+                                        <option value="26">سیستان و بلوچستان</option>
+                                        <option value="27">ایلام</option>
+                                        <option value="28">کهگلویه و بویراحمد</option>
+                                        <option value="29">خراسان شمالی</option>
+                                        <option value="30">خراسان جنوبی</option>
+                                        <option value="31">البرز</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label for="country">شهر<span>*</span></label>
+                                    <select class="form-control" name="CityId" id="CityId" required>
+                                        <option value="0" selected>لطفا شهر را انتخاب نمایید</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>آدرس <span>*</span></label>
+                                    <textarea class="form-control" rows="3" name="Address" id="Address" required>@Model.User.Address</textarea>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>کد پستی <span>*</span></label>
+                                    <input type="text" name="ZipCode" id="ZipCode" value="@Model.User.ZipCode" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>ایمیل <span></span></label>
+                                    <input type="email" name="Email" id="Email" value="@Model.User.Username" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <div class="order-notes">
+                                        <label for="order_note">افزودن نوشته</label>
+                                        <textarea class="form-control" name="Description" id="Description" placeholder="در صورت نیاز توضیحات اضافه را وارد نمایید." rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <form action="#">
+                            <h3>سبد شما</h3>
+                            <div class="order_table table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>تعداد</th>
+                                            <th>جمع کل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var crt in Model.Carts)
+                                        {
+                                            <tr>
+                                                <td> @crt.Product.ProductName </td>
+                                                <td> @crt.Quantity </td>
+                                                <td> @String.Format("{0:n0} تومان", crt.Product.Price * crt.Quantity) </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>جمع سبد خرید</th>
+                                            <td>@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</td>
+                                        </tr>
+                                        <tr>
+                                            <th>کد تخفیف</th>
+                                            <td>0 تومن</td>
+                                        </tr>
+                                        <tr>
+                                            <th>هزینه ارسال</th>
+                                            <td id="txtShipPrice">0 تومن</td>
+                                        </tr>
+                                        <tr class="order_total">
+                                            <th>جمع کل</th>
+                                            <td><strong id="txtOrderTotal">@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment_method">
+                                <div class="checkout_btn" style="text-align:right !important;display:flex;">
+                                    <a href="#" id="btnContinue">تایید اطلاعات مرسوله و پرداخت</a>
+                                    <p id="transferMessage" style="padding-right:1rem;" hidden> در حال انتقال به درگاه،لطفا منتظر بمانید <i class="fa fa-spinner"></i></p>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row mt-2">
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert" id="warningDiv" hidden>
+                                <p id="warningMessage"></p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv" hidden>
+                                <p id="errorMessage"></p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--اکنون پرداخت کنیدpage section end-->
+}else
+{
+    <!--اکنون پرداخت کنیدpage section-->
+    <div class="Checkout_section mt-32">
+        <div class="container">
+            <div class="checkout_form">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <form id="FrmOrder" action="#">
+                            <input name="NidOrder" id="NidOrder" value="@Model.Order.NidOrder" hidden />
+                            <h3>اطلاعات ارسال مرسوله</h3>
+                            <div class="row">
+                                <div class="col-lg-6 mb-20">
+                                    <label>نام<span>*</span></label>
+                                    <input type="text" name="FirstName" id="FirstName" value="@Model.Order.FirstName" required />
+                                </div>
+                                <div class="col-lg-6 mb-20">
+                                    <label>نام خانوادگی<span>*</span></label>
+                                    <input type="text" name="LastName" id="LastName" value="@Model.Order.LastName" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>شماره تماس</label>
+                                    <input type="text" name="Tel" id="Tel" value="@Model.Order.Tel">
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label for="country">استان<span>*</span></label>
+                                    <select class="form-control" name="StateId" id="StateId" onChange="FindCities(this.value);" required>
+                                        <option value="0" selected>لطفا استان را انتخاب نمایید</option>
+                                        <option value="1">تهران</option>
+                                        <option value="2">گیلان</option>
+                                        <option value="3">آذربایجان شرقی</option>
+                                        <option value="4">خوزستان</option>
+                                        <option value="5">فارس</option>
+                                        <option value="6">اصفهان</option>
+                                        <option value="7">خراسان رضوی</option>
+                                        <option value="8">قزوین</option>
+                                        <option value="9">سمنان</option>
+                                        <option value="10">قم</option>
+                                        <option value="11">مرکزی</option>
+                                        <option value="12">زنجان</option>
+                                        <option value="13">مازندران</option>
+                                        <option value="14">گلستان</option>
+                                        <option value="15">اردبیل</option>
+                                        <option value="16">آذربایجان غربی</option>
+                                        <option value="17">همدان</option>
+                                        <option value="18">کردستان</option>
+                                        <option value="19">کرمانشاه</option>
+                                        <option value="20">لرستان</option>
+                                        <option value="21">بوشهر</option>
+                                        <option value="22">کرمان</option>
+                                        <option value="23">هرمزگان</option>
+                                        <option value="24">چهارمحال و بختیاری</option>
+                                        <option value="25">یزد</option>
+                                        <option value="26">سیستان و بلوچستان</option>
+                                        <option value="27">ایلام</option>
+                                        <option value="28">کهگلویه و بویراحمد</option>
+                                        <option value="29">خراسان شمالی</option>
+                                        <option value="30">خراسان جنوبی</option>
+                                        <option value="31">البرز</option>
+
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label for="country">شهر<span>*</span></label>
+                                    <select class="form-control" name="CityId" id="CityId" required>
+                                        <option value="0" selected>لطفا شهر را انتخاب نمایید</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>آدرس <span>*</span></label>
+                                    <textarea class="form-control" rows="3" name="Address" id="Address" required>@Model.Order.Address</textarea>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>کد پستی <span>*</span></label>
+                                    <input type="text" name="ZipCode" id="ZipCode" value="@Model.Order.ZipCode" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <label>ایمیل <span></span></label>
+                                    <input type="email" name="Email" id="Email" value="@Model.Order.Email" required>
+                                </div>
+                                <div class="col-12 mb-20">
+                                    <div class="order-notes">
+                                        <label for="order_note">افزودن نوشته</label>
+                                        <textarea class="form-control" name="Description" id="Description" placeholder="در صورت نیاز توضیحات اضافه را وارد نمایید." rows="3">@Model.Order.Description</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <form action="#">
+                            <h3>سبد شما</h3>
+                            <div class="order_table table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>تعداد</th>
+                                            <th>جمع کل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var crt in Model.Carts)
+                                        {
+                                            <tr>
+                                                <td> @crt.Product.ProductName </td>
+                                                <td> @crt.Quantity </td>
+                                                <td> @String.Format("{0:n0} تومان", crt.Product.Price * crt.Quantity) </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>جمع سبد خرید</th>
+                                            <td>@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</td>
+                                        </tr>
+                                        <tr>
+                                            <th>کد تخفیف</th>
+                                            <td>0 تومن</td>
+                                        </tr>
+                                        <tr>
+                                            <th>هزینه ارسال</th>
+                                            <td id="txtShipPrice">0 تومن</td>
+                                        </tr>
+                                        <tr class="order_total">
+                                            <th>جمع کل</th>
+                                            <td><strong id="txtOrderTotal">@String.Format("{0:n0} تومان", Model.Carts.Sum(p => p.Product.Price*p.Quantity))</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment_method">
+                                <div class="checkout_btn" style="text-align:right !important;display:flex;">
+                                    <a href="#" id="btnContinue">تایید اطلاعات مرسوله و پرداخت</a>
+                                    <p id="transferMessage" style="padding-right:1rem;" hidden> در حال انتقال به درگاه،لطفا منتظر بمانید <i class="fa fa-spinner"></i></p>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row mt-2">
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert" id="warningDiv" hidden>
+                                <p id="warningMessage"></p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorDiv" hidden>
+                                <p id="errorMessage"></p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--اکنون پرداخت کنیدpage section end-->
+}
+<div class="modal fade" id="modalDargahAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">پیام</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 modal__border">
+                            <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;">به اطلاع می رساند سایت در حال بروزرسانی می باشد و امکان اتصال به درگاه در حال حاضر وجود ندارد.لطفا بعدا امتحان کنید.از شکیبایی شما متشکریم</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    string tmpnidorder = "";
+    int stateid = 0;
+    int cityid = 0;
+    decimal aggregate = Model.Carts.Sum(p => p.Product.Price * p.Quantity);
+    decimal totalWeight = decimal.Parse(Model.Carts.Sum(p => p.Product.Weight).ToString());
+    decimal shipPriceCal = 0;
+    decimal totalAggregate = aggregate;
+    if (Model.Order != null)
+    {
+        tmpnidorder = Model.Order.NidOrder.ToString();
+        stateid = Model.Order.StateId ?? 0;
+        cityid = Model.Order.CityId ?? 0;
+        if (stateid != 0)
+        {
+            if (stateid == 1)
+                shipPriceCal = Model.ShipPrices.FirstOrDefault(p => p.ToWeight == Math.Ceiling(totalWeight)).InnerState;
+            else if (stateid == 9 || stateid == 10 || stateid == 11 || stateid == 13 || stateid == 31)
+                shipPriceCal = Model.ShipPrices.FirstOrDefault(p => p.ToWeight == Math.Ceiling(totalWeight)).NeighborState;
+            else
+                shipPriceCal = Model.ShipPrices.FirstOrDefault(p => p.ToWeight == Math.Ceiling(totalWeight)).OtherState;
+            totalAggregate = aggregate + shipPriceCal;
+        }
+    }
+}
+@section Scripts
+    {
+    <script src="assets/js/vendor/city.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["dargahRedirectError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["dargahRedirectError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 60000);
+            }
+            var stateId = '@stateid';
+            var cityId = '@cityid';
+            var aggregateVal = '@aggregate';
+            var totalWeightVal = '@totalWeight';
+            var totalaggregateVal = '@totalAggregate';
+            var shipPriceVal = '@shipPriceCal';
+            if (stateId != "0") {
+                $("#StateId").val(stateId);
+                FindCities(stateId);
+                if (cityId != "0") {
+                    $("#CityId").val(cityId);
+                    $("#txtShipPrice").html(addCommas(shipPriceVal) + ' تومان ');
+                    $("#txtOrderTotal").html(addCommas(totalaggregateVal) + ' تومان ');
+                }
+            }
+            $("#btnContinue").click(function (e) {
+                e.preventDefault();
+                //$("#modalDargahAlert").modal();//dargah not ready
+                if (isNullOrWhitespace($("#FirstName").val()) || isNullOrWhitespace($("#LastName").val()) || $("#StateId").val() == 0 || $("#CityId").val() == 0 || isNullOrWhitespace($("#ZipCode").val()) || isNullOrWhitespace($("#Address").val()) || !/^\d{10}$/.test($("#ZipCode").val())) {
+                    $("#warningDiv").removeAttr('hidden');
+                    $("#warningMessage").text('لطفا اطلاعات ارسال مرسوله را تکمیل نمایید');
+                    window.setTimeout(function () {
+                        $("#warningDiv").attr('hidden', 'hidden');
+                    }, 5000);
+                } else {
+                    $("#transferMessage").removeAttr('hidden');
+                    $.ajax(
+                        {
+                            url: '@Url.Action("CheckoutSubmit","Home")',
+                            type: 'post',
+                            datatype: 'json',
+                            data: $("#FrmOrder").serialize(),
+                            success: function (result) {
+                                if (result.success) {
+                                    window.location.href = result.redirect;
+                                } else {
+                                    $("#errorDiv").removeAttr('hidden');
+                                    $("#errorMessage").text(result.message);
+                                    window.setTimeout(function () {
+                                        $("#errorDiv").attr('hidden', 'hidden');
+                                    }, 5000);
+                                }
+                            },
+                            error: function () { }
+                        });
+                    $("#transferMessage").attr('hidden','hidden');
+                }
+            });
+            $("#CityId").change(function()
+            {
+                $.ajax(
+                    {
+                        url: '@Url.Action("GetShipFee","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: { StateId: $("#StateId").val(), TotalWeight: totalWeightVal, CurrentAggregate: aggregateVal },
+                        success: function (result) {
+                            if (result.success) {
+                                $("#txtShipPrice").html(result.shipprice);
+                                $("#txtOrderTotal").html(result.newaggregate);
+                            }
+                        },
+                        error: function () { }
+                    });
+            });
+        });
+        function isNullOrWhitespace(input) {
+            if (typeof input === 'undefined' || input == null) return true;
+
+            return input.replace(/\s/g, '').length < 1;
+        }
+    </script>
+}
+

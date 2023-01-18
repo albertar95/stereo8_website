@@ -1,0 +1,506 @@
+﻿@model AudioShopFrontend.Models.User
+@{
+    ViewData["Title"] = "حساب کاربری";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Desc"] = "حساب کاربری - وب سایت استریو 8";
+    ViewData["CUrl"] = string.Format("http://stereo8.ir{0}", Url.Action("Profile", "Home"));
+    ViewData["Typo"] = "website";
+}
+@section Styles
+{
+    <meta name="robots" content="nofollow, noindex" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>حساب کاربری من</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-6 mt-3">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!-- my account start  -->
+<section class="main_content_area">
+    <div class="container">
+        <div class="account_dashboard">
+            <div class="row">
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                    <!-- Nav tabs -->
+                    <div class="dashboard_tab_button">
+                        <ul role="tablist" class="nav flex-column dashboard-list" id="actions">
+                            <li><a href="#dashboard" data-toggle="tab" class="nav-link active">داشبورد</a></li>
+                            <li><a href="#account-details" id="btnDetail" data-toggle="tab" class="nav-link">اطلاعات کاربر</a></li>
+                            <li><a href="#address" id="btnAddress" data-toggle="tab" class="nav-link">آدرس</a></li>
+                            <li> <a href="#carts" data-toggle="tab" class="nav-link">سبد خرید</a></li>
+                            <li> <a href="#Favorites" data-toggle="tab" class="nav-link">علاقه مندی ها</a></li>
+                            <li><a href="#orders" data-toggle="tab" class="nav-link">سفارشات من</a></li>
+                            <li> <a href="#ships" data-toggle="tab" class="nav-link">مرسوله ها</a></li>
+                            @*<li> <a href="#pays" data-toggle="tab" class="nav-link">جزییات پرداختی ها</a></li>*@
+                            <li><a href="#" data-toggle="modal" data-target="#logoutModal" class="nav-link">خروج</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-9 col-lg-9">
+                    <!-- Tab panes -->
+                    <div class="tab-content dashboard_content">
+                        <div class="tab-pane fade show active" id="dashboard">
+                            <h3>داشبورد </h3>
+                            <p>
+                                به وب سایت @AudioShopFrontend.Helpers.Commons.GetAppName(true) خوش آمدید!
+                            </p>
+                        </div>
+                        <div class="tab-pane fade" id="account-details">
+                            <h3>جزئیات حساب کاربری </h3>
+                            <div class="login">
+                                <div class="login_form_container">
+                                    <div class="account_login_form">
+                                        <form action="UpdateUser">
+                                            <input name="NidUser" value="@Model.NidUser" hidden />
+                                            <input name="CreateDate" value="@Model.CreateDate" hidden />
+                                            <input name="LastLoginDate" value="@Model.LastLoginDate" hidden />
+                                            <label>نام</label>
+                                            <input type="text" name="FirstName" value="@Model.FirstName" autofocus required>
+                                            <label>نام خانوادگی</label>
+                                            <input type="text" name="LastName" value="@Model.LastName" required>
+                                            <label>ایمیل/نام کاربری</label>
+                                            <input type="text" name="Username" value="@Model.Username" readonly>
+                                            <label>رمز عبور</label>
+                                            <input type="password" name="user-password" value="•••••••" readonly>
+                                            <label>شماره تماس</label>
+                                            <input type="text" value="@Model.Tel" name="Tel">
+                                            <label>تاریخ عضویت</label>
+                                            <input type="text"  value="@Model.PersianCreateDate.Substring(0,10)" readonly>
+                                            <label>تاریخ آخرین ورود کاربر</label>
+                                            <input type="text" value="@Model.PersianLastLoginDate" readonly>
+                                            <div class="save_button primary_btn default_button">
+                                                <button type="submit">ذخیره</button>
+                                                <button id="btnChangePassword">تغییر کلمه عبور</button>
+                                            </div>
+                                            <div class="col-6 mt-3">
+                                                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv2" hidden>
+                                                    <p id="successMessage2"></p>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="address">
+                            <h4 class="billing-address"></h4>
+                            <p><strong>آدرس فعلی شما : </strong></p>
+                            <address>
+                                @string.Format("{0}",Model.Address??"آدرسی ثبت نشده است")
+                            </address>
+                            @if(Model.ZipCode != null)
+                            {
+                                <p><strong>کد پستی : </strong> @Model.ZipCode </p>
+                            }else
+                            {
+                                <p><strong>کد پستی : </strong> کد پستی ثبت نشده است </p>
+                            }
+                            <a href="#" id="btnEditAddress" class="btn btn-warning mb-3" style="color:#212529;">ویرایش آدرس<i class="fa fa-pencil"></i></a>
+                            <div class="login" id="editAddressDiv" hidden>
+                                <div class="login_form_container">
+                                    <div class="account_login_form">
+                                        <form action="UpdateAddress">
+                                            <input name="NidUser" value="@Model.NidUser" hidden required />
+                                            <label>آدرس</label>
+                                            <textarea class="form-control" id="editAddress" name="Address" rows="3">@Model.Address</textarea>
+                                            <label>کد پستی</label>
+                                            <input type="text" name="ZipCode" value="@Model.ZipCode" required>
+                                            <div class="save_button primary_btn default_button">
+                                                <button type="submit">ذخیره</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="carts">
+                            <h3>سبد خرید</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>قیمت</th>
+                                            <th>تعداد</th>
+                                            <th>جمع کل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var crt in Model.Carts)
+                                       {
+                                            <tr id="@crt.NidCart">
+                                                <td><a href="@Url.Action("Product","Home",new {Title = crt.Product.ProductName.Trim().Replace(' ','_')})">@crt.Product.ProductName</a></td>
+                                                <td>@String.Format("{0:n0} تومان", crt.Product.Price)</td>
+                                                <td>@crt.Quantity</td>
+                                                <td>@String.Format("{0:n0} تومان", crt.Product.Price * crt.Quantity)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="Favorites">
+                            <h3>علاقه مندی ها</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>قیمت</th>
+                                            <th>تعداد موجود</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var fav in Model.Favorites)
+                                        {
+                                            <tr>
+                                                <td>@fav.Product.ProductName</td>
+                                                <td>@fav.Product.Price</td>
+                                                <td>@fav.Product.AvailableCount</td>
+                                                <td><a href="@Url.Action("Product","Home",new { Title = fav.Product.ProductName.Trim().Replace(' ','_')})" class="view">مشاهده</a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="orders">
+                            <h3>سفارشات من</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ردیف</th>
+                                            <th>تاریخ</th>
+                                            <th>محصولات</th>
+                                            <th>مبلغ کل</th>
+                                            <th>وضعیت سفارش</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int index = 0;
+                                        }
+                                        @foreach (var ord in Model.Orders)
+                                        {
+                                            <tr>
+                                                <td>@string.Format("{0}",++index)</td>
+                                                @if (!string.IsNullOrWhiteSpace(ord.PersianCreateDate))
+                                                {
+                                                    <td>@ord.PersianCreateDate.Substring(0,10)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@ord.PersianCreateDate</td>
+                                                }
+                                                <td>
+                                                    @foreach (var prd in ord.OrderDetails)
+                                                    {
+                                                        <p>@prd.Product.ProductName</p><br />
+                                                    }
+                                                </td>
+                                                <td>@String.Format("{0:n0} تومان", ord.TotalPrice)</td>
+                                                @if(ord.State == 0)
+                                                {
+                                                    <td>پرداخت نشده</td>
+                                                }else if(ord.State == 100 || ord.State == 101)
+                                                {
+                                                    <td>پرداخت شده</td>
+                                                }else{
+                                                    <td>خطا در پرداخت</td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="ships">
+                            <h3>مرسوله ها</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ردیف</th>
+                                            <th>تاریخ</th>
+                                            <th>آدرس</th>
+                                            <th>کدپستی</th>
+                                            <th>وضعیت مرسوله</th>
+                                            <th>تاریخ تحویل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{int index2 = 0;}
+                                        @foreach (var ord in Model.Orders)
+                                        {
+                                            foreach (var shp in ord.Ships)
+                                            {
+                                                <tr>
+                                                    <td>@string.Format("{0}",++index2)</td>
+                                                    @if (!string.IsNullOrWhiteSpace(shp.PersianCreateDate))
+                                                    {
+                                                        <td>@shp.PersianCreateDate.Substring(0,10)</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@shp.PersianCreateDate</td>
+                                                    }
+                                                    <td>@shp.Address</td>
+                                                    <td>@shp.ZipCode</td>
+                                                    @switch (shp.State)
+                                                    {
+                                                        case 0:
+                                                            <td>سفارش پرداخت نشده</td>
+                                                            break;
+                                                        case 1 :
+                                                            <td>در حال پردازش</td>
+                                                            break;
+                                                        case 2:
+                                                            <td>تحویل پست شده</td>
+                                                            break;
+                                                        case 3:
+                                                            <td>تحویل مشتری داده شده</td>
+                                                            break;
+                                                        case 4:
+                                                            <td>مرجوع شده</td>
+                                                            break;
+                                                    }
+                                                    @if (!string.IsNullOrWhiteSpace(shp.PersianDueDate))
+                                                    {
+                                                        <td>@shp.PersianDueDate.Substring(0,10)</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@shp.PersianDueDate</td>
+                                                    }
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @*<div class="tab-pane fade" id="pays">
+                            <h3>جزییات پرداختی</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>دانلود</th>
+                                            <th>انقضاء</th>
+                                            <th>دانلود</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>تی شرت ندا</td>
+                                            <td>5 آبان 1399</td>
+                                            <td><span class="danger">منقضی شده</span></td>
+                                            <td><a href="#" class="view">دانلود </a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>شربت آبلیمو </td>
+                                            <td>5 آبان 1399</td>
+                                            <td>موجود</td>
+                                            <td><a href="#" class="view">دانلود</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="changePassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">تغییر کلمه عبور</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="account_login_form">
+                    <form action="#">
+                        <label>کلمه عبور جدید</label>
+                        <input type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" oninput="checkPassword(this.value,2)" id="PassPassword" autofocus required>
+                        <div class="alert alert-warning fade show" role="alert" id="PasswordWarnDiv2" hidden>
+                            <p id="PasswordWarnMessage" style="font-weight:bold;">
+                                کلمه عبور می بایست شرایط زیر را داشته باشد :
+                                <ul style="padding-right:1rem;list-style:inherit;">
+                                    <li>حداقل شش کاراکتر باشد</li>
+                                    <li>شامل عدد باشد</li>
+                                    <li>شامل حروف کوچک و بزرگ باشد</li>
+                                </ul>
+                            </p>
+                        </div>
+                        <label>تکرار کلمه عبور</label>
+                        <input type="password" id="PassRepeatPassword" required>
+                        <div class="save_button primary_btn default_button">
+                            <button onclick="UpdatePassword(event)">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <div class="col-12 mt-3">
+                    <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="modalErrorDiv" hidden>
+                        <p id="modalErrorMessage"></p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- my account end   -->
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["ProfileSuccess"]' != "") {
+                $('.nav-link').removeClass('active');
+                $('.dashboard-list li a#btnDetail').addClass('active');
+                $('.tab-pane').removeClass('active');
+                $('.tab-pane').removeClass('show');
+                $('#account-details').addClass('active');
+                $('#account-details').addClass('show');
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["ProfileSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["ProfileError"]' != "") {
+                $('.nav-link').removeClass('active');
+                $('.dashboard-list li a#btnDetail').addClass('active');
+                $('.tab-pane').removeClass('active');
+                $('.tab-pane').removeClass('show');
+                $('#account-details').addClass('active');
+                $('#account-details').addClass('show');
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["ProfileError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["AddressSuccess"]' != "") {
+                $('.nav-link').removeClass('active');
+                $('.dashboard-list li a#btnAddress').addClass('active');
+                $('.tab-pane').removeClass('active');
+                $('.tab-pane').removeClass('show');
+                $('#address').addClass('active');
+                $('#address').addClass('show');
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["AddressSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["AddressError"]' != "") {
+                $('.nav-link').removeClass('active');
+                $('.dashboard-list li a#btnAddress').addClass('active');
+                $('.tab-pane').removeClass('active');
+                $('.tab-pane').removeClass('show');
+                $('#address').addClass('active');
+                $('#address').addClass('show');
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["AddressError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+            $("#btnChangePassword").click(function(e)
+            {
+                e.preventDefault();
+                $("#changePassModal").modal();
+            });
+            $("#btnEditAddress").click(function (e) {
+                e.preventDefault();
+                $("#editAddressDiv").removeAttr('hidden');
+                $("#editAddress").focus();
+            });
+        });
+        function UpdatePassword(e)
+        {
+            e.preventDefault();
+            if ($("#PassPassword").val() == $("#PassRepeatPassword").val())
+            {
+                $.ajax(
+                    {
+                        url: '@Url.Action("UpdatePassword","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: { NidUser: '@Model.NidUser', Password: $("#PassPassword").val() },
+                        success: function (result) {
+                            if (result.success) {
+                                $("#PassPassword").val('');
+                                $("#PassRepeatPassword").val('');
+                                $("#changePassModal").modal('hide');
+                                $("#successDiv2").removeAttr('hidden');
+                                $("#successMessage2").text(result.message);
+                                window.setTimeout(function () {
+                                    $("#successDiv2").attr('hidden', 'hidden');
+                                }, 7000);
+                            }else
+                            {
+                                $("#modalErrorDiv").removeAttr('hidden');
+                                $("#modalErrorMessage").text(result.message);
+                                window.setTimeout(function () {
+                                    $("#modalErrorDiv").attr('hidden', 'hidden');
+                                }, 5000);
+                            }
+                        },
+                        error: function () { }
+                    });
+            }else
+            {
+                $("#modalErrorDiv").removeAttr('hidden');
+                $("#modalErrorMessage").text('تکرار کلمه عبور با کلمه عبور برابر نمی باشد.');
+                window.setTimeout(function () {
+                    $("#modalErrorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+        }
+    </script>
+}

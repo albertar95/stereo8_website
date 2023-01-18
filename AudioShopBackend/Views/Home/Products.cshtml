@@ -1,0 +1,364 @@
+﻿@model AudioShopBackend.ViewModels.ProductViewModel
+
+@{
+    ViewData["Title"] = "محصولات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="padding:25px;">
+    <div class="col-lg-12 d-flex">
+        <div class="m-1">
+            <label class="form-control-lg">فیلتر بر اساس : </label>
+        </div>
+        <div class="dropdown mb-4" style="padding-top:.75rem;">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                یک مورد را انتخاب کنید
+            </button>
+            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton" style="">
+                <a class="dropdown-item" href="#" onclick="FilterChanged(1)">دسته بندی</a>
+                <a class="dropdown-item" href="#" onclick="FilterChanged(2)">تاریخ ایجاد</a>
+                <a class="dropdown-item" href="#" onclick="FilterChanged(3)">قیمت</a>
+                <a class="dropdown-item" href="#" onclick="FilterChanged(4)">موجودی</a>
+            </div>
+        </div>
+        <div class="m-1" id="Filter1" style="padding-top:.5rem;display:none;">
+            <div class="form-group mr-2">
+                <select name="CategoryId" class="form-control" id="sltCategoryId" style="padding:0;width:100%;">
+                    <option disabled selected>انتخاب دسته بندی</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <option value="@cat.NidCategory">@cat.CategoryName</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <select name="TypeId" class="form-control" style="padding:0;width:100%;" id="sltTypeId" disabled>
+                    <option value="@Guid.Empty" disabled selected>انتخاب نوع</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        foreach (var typ in cat.Types)
+                        {
+                            <option value="@typ.NidType" title="@cat.NidCategory">@typ.TypeName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <select name="BrandId" class="form-control" style="padding:0;width:100%;" id="sltBrandId" disabled>
+                    <option value="@Guid.Empty" disabled selected>انتخاب برند</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        foreach (var brd in cat.Brands)
+                        {
+                            <option value="@brd.NidBrand" title="@cat.NidCategory">@brd.BrandName</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="m-1" id="Filter2" style="padding-top:.5rem;display:none;">
+            <div class="mr-2 d-flex">
+                <label class="form-control-sm">از تاریخ</label>
+                <input class="form-control" type="date" id="FromDate" value="@string.Format("{0}-{1}-{2}",DateTime.Now.Year,DateTime.Now.Month.ToString().PadLeft(2,'0'),DateTime.Now.Day.ToString().PadLeft(2,'0'))" />
+            </div>
+            <div class="mr-2 d-flex">
+                <label class="form-control-sm">تا تاریخ</label>
+                <input class="form-control" type="date" id="ToDate" value="@string.Format("{0}-{1}-{2}",DateTime.Now.Year,DateTime.Now.Month.ToString().PadLeft(2,'0'),DateTime.Now.Day.ToString().PadLeft(2,'0'))" />
+            </div>
+        </div>
+        <div class="m-1" id="Filter3" style="padding-top:.5rem;display:none;">
+            <div class="mr-2 d-flex">
+                <label class="form-control-sm">از قیمت</label>
+                <input class="form-control" type="number" id="FromPrice" value="0" />
+            </div>
+            <div class="mr-2 d-flex">
+                <label class="form-control-sm">تا قیمت</label>
+                <input class="form-control" type="number" id="ToPrice" value="1000000" />
+            </div>
+        </div>
+        <div class="m-1" id="Filter4" style="padding-top:.5rem;display:none;">
+            <div class="form-group mr-2">
+                <select class="form-control" id="sltAvailable" style="padding:0;width:100%;">
+                    <option disabled selected>انتخاب موجودی</option>
+                    <option value="1">موجود</option>
+                    <option value="0">ناموجود</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">محصولات</h6>
+    </div>
+    <div class="card-body">
+        <div class="row" style="padding:25px;">
+            <div class="col-lg-6">
+                <div class="m-1">
+                    <a href="@Url.Action("AddProduct","Home")" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">ایجاد محصول</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                    <p id="successMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                    <p id="errorMessage"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="TableContainer">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead style="text-align:center;">
+                        <tr>
+                            <th>عنوان</th>
+                            <th>نوع</th>
+                            <th>برند</th>
+                            <th>قیمت</th>
+                            <th>تخفیف</th>
+                            <th>تعداد موجود</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prd in Model.Products)
+                        {
+                            <tr style="text-align:center;" id="@prd.NidProduct">
+                                <td>@prd.ProductName</td>
+                                <td>@prd.Type.TypeName</td>
+                                <td>@prd.Brand.BrandName</td>
+                                <td>@String.Format("{0:n0} تومان", prd.Price)</td>
+                                <td>@prd.OffPercentage&nbsp;%</td>
+                                <td>@prd.AvailableCount</td>
+                                <td>
+                                    <a href="@Url.Action("EditProduct","Home",new {NidProduct = prd.NidProduct})" class="btn btn-warning btn-circle">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a href="#" onclick="ProductDetail('@prd.NidProduct','@prd.ProductName')" class="btn btn-info btn-circle">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a href="#" onclick="DeleteProduct('@prd.NidProduct','@prd.ProductName')" class="btn btn-danger btn-circle">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">آیا برای حذف این محصول مطمئن هستید؟</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="txtmodalBody2"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">خیر</button>
+                <a class="btn btn-success" href="#" onclick="" id="btnMAccept">بلی</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">جزییات محصول</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detailmodalbody">
+                <p id="txtmodalBody2"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(function () {
+            if ('@TempData["ProductSuccess"]' != "") {
+                $("#successDiv").removeAttr('hidden');
+                $("#successMessage").text('@TempData["ProductSuccess"]');
+                window.setTimeout(function () {
+                    $("#successDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            if ('@TempData["ProductError"]' != "") {
+                $("#errorDiv").removeAttr('hidden');
+                $("#errorMessage").text('@TempData["ProductError"]');
+                window.setTimeout(function () {
+                    $("#errorDiv").attr('hidden', 'hidden');
+                }, 5000);
+            }
+            $("#sltCategoryId").change(function () {
+                var catId = $(this).find(':selected').val();
+                $("#sltTypeId").removeAttr('disabled');
+                $("#sltTypeId > option").each(function () {
+                    if ($(this).prop('disabled') == false) {
+                        if ($(this).attr('title') != catId)
+                            $(this).attr('hidden', 'hidden')
+                        else
+                            $(this).removeAttr('hidden')
+                    }else
+                    {
+                        $(this).prop('selected', 'selected');
+                    }
+                });
+                $("#sltBrandId").removeAttr('disabled');
+                $("#sltBrandId > option").each(function () {
+                    if ($(this).prop('disabled') == false) {
+                        if ($(this).attr('title') != catId)
+                            $(this).attr('hidden', 'hidden')
+                        else
+                            $(this).removeAttr('hidden')
+                    } else {
+                        $(this).prop('selected', 'selected');
+                    }
+                });
+                FilterProduct(1, $("#sltCategoryId").find(':selected').val() + ',' + $("#sltTypeId").find(':selected').val() + ',' + $("#sltBrandId").find(':selected').val());
+            });
+            $("#sltTypeId").change(function () {
+                FilterProduct(1, $("#sltCategoryId").find(':selected').val() + ',' + $("#sltTypeId").find(':selected').val() + ',' + $("#sltBrandId").find(':selected').val());
+            });
+            $("#sltBrandId").change(function () {
+                FilterProduct(1, $("#sltCategoryId").find(':selected').val() + ',' + $("#sltTypeId").find(':selected').val() + ',' + $("#sltBrandId").find(':selected').val());
+            });
+            $("#FromDate").change(function () {
+                FilterProduct(2, $("#FromDate").val() + ',' + $("#ToDate").val());
+            });
+            $("#ToDate").change(function () {
+                FilterProduct(2, $("#FromDate").val() + ',' + $("#ToDate").val());
+            });
+            $("#FromPrice").change(function () {
+                FilterProduct(3, $("#FromPrice").val() + ',' + $("#ToPrice").val());
+            });
+            $("#ToPrice").change(function () {
+                FilterProduct(3, $("#FromPrice").val() + ',' + $("#ToPrice").val());
+            });
+            $("#sltAvailable").change(function () {
+                FilterProduct(4, $("#sltAvailable").find(':selected').val());
+            });
+        });
+        function FilterChanged(index) {
+            switch (index) {
+                case 1:
+                    $("#Filter1").css('display', 'flex');
+                    $("#Filter2").css('display', 'none');
+                    $("#Filter3").css('display', 'none');
+                    $("#Filter4").css('display', 'none');
+                    $("#dropdownMenuButton").text('دسته بندی');
+                    break;
+                case 2:
+                    $("#Filter2").css('display', 'flex');
+                    $("#Filter1").css('display', 'none');
+                    $("#Filter3").css('display', 'none');
+                    $("#Filter4").css('display', 'none');
+                    $("#dropdownMenuButton").text('تاریخ ایجاد');
+                    break;
+                case 3:
+                    $("#Filter3").css('display', 'flex');
+                    $("#Filter2").css('display', 'none');
+                    $("#Filter1").css('display', 'none');
+                    $("#Filter4").css('display', 'none');
+                    $("#dropdownMenuButton").text('قیمت');
+                    break;
+                case 4:
+                    $("#Filter4").css('display', 'flex');
+                    $("#Filter2").css('display', 'none');
+                    $("#Filter3").css('display', 'none');
+                    $("#Filter1").css('display', 'none');
+                    $("#dropdownMenuButton").text('موجودی');
+                    break;
+            }
+        }
+        function ProductDetail(nidproduct) {
+            $.ajax(
+                {
+                    url: '@Url.Action("ProductDetail","Home")' + '?NidProduct=' + nidproduct,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#detailmodalbody").html(result.html.result);
+                            $("#detailModal").modal();
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+        function DeleteProduct(nidproduct, name) {
+            $("#txtmodalBody2").text('نام محصول : ' + name);
+            $("#btnMAccept").attr('onclick', "SubmitDeleteProduct('" + nidproduct + "')");
+            $("#deleteModal").modal();
+        }
+        function SubmitDeleteProduct(nidproduct) {
+            $.ajax(
+                {
+                    url: '@Url.Action("DeleteProduct","Home")' + '?NidProduct=' + nidproduct,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#successDiv").removeAttr('hidden');
+                            $("#successMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#successDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                            $("table#dataTable tr#" + nidproduct).remove();
+                        } else {
+                            $("#errorDiv").removeAttr('hidden');
+                            $("#errorMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#errorDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                        }
+                        $("#deleteModal").modal('toggle');
+                    },
+                    error: function () { }
+                });
+        }
+        function FilterProduct(index, filtertext) {
+            $.ajax(
+                {
+                    url: '@Url.Action("ProductFilter","Home")' + '?Index=' + index + '&FilterText=' + filtertext,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#TableContainer").html(result.html.result);
+                            $('#dataTable').DataTable();
+                        }
+                    },
+                    error: function () { }
+                });
+        }
+    </script>
+}

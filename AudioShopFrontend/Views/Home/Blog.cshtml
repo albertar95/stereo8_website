@@ -1,0 +1,208 @@
+﻿@model AudioShopFrontend.ViewModels.BlogViewModel
+@{
+    ViewData["Title"] = "وبلاگ";
+    ViewData["Desc"] = "وبلاگ استریو 8";
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("Blog", "Home"));
+    ViewData["Typo"] = "article";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    @if(Model.Posts.Any())
+    {
+        <meta property="og:updated_time" content="@Model.Posts.OrderByDescending(p => p.LastModified).FirstOrDefault().LastModified" />
+    }else
+    {
+        <meta property="og:updated_time" content="2022-12-09T22:28:56+03:30" />
+    }
+    <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="وبلاگ استریو 8" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+    <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+    @if (Model.Posts.Any())
+    {
+        <meta property="article:published_time" content="@Model.Posts.OrderByDescending(p => p.LastModified).FirstOrDefault().PersianCreateDate" />
+        <meta property="article:modified_time" content="@Model.Posts.OrderByDescending(p => p.LastModified).FirstOrDefault().PersianLastModified" />
+    }
+    else
+    {
+        <meta property="article:published_time" content="1400-03-15\14:28:07" />
+        <meta property="article:modified_time" content="1400-09-15\18:28:07" />
+    }
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>وبلاگ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--blog area start-->
+<div class="blog_page_section blog_sidebar blog_reverse mt-23">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="blog_sidebar_widget">
+                    <div class="widget_list widget_search">
+                        <h3>جستجو</h3>
+                        <form action="BlogPost">
+                            <input name="BlogType" type="number" value="3" hidden>
+                            <input placeholder="جستجو..." name="Title" type="text" required>
+                            <button type="submit">جستجو</button>
+                        </form>
+                    </div>
+                    <div class="widget_list widget_tag">
+                        <h3>برچسب ها</h3>
+                        <div class="tag_widget">
+                            <ul>
+                                @if (Model.Keywords != null)
+                                {
+                                    @foreach (var kw in Model.Keywords)
+                                    {
+                                        <li><a href="@Url.Action("BlogPost","Home",new {BlogType = 2, Title = kw.Replace(' ','_')})">@kw</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="widget_list widget_post">
+                        <h3>مطالب اخیر</h3>
+                        @foreach (var blg in Model.LatestBlog)
+                        {
+                            <div class="post_wrapper">
+                                <div class="post_thumb">
+                                    @if (Model.Files.Any(p => p.RelateId == blg.NidBlog && p.RelateType == 10))
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == blg.NidBlog && p.RelateType == 10).FileUrl" alt="@blg.Title.Replace(' ','_')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})"><img src="" alt="@blg.Title.Replace(' ','_')"></a>
+                                    }
+                                </div>
+                                <div class="post_info">
+                                    <h3><a href="@Url.Action("BlogDetail","Home",new {Title = blg.Title.Replace(' ','_')})">@blg.Title</a></h3>
+                                    <span>@blg.PersianCreateDate.Substring(0,10) </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="widget_list widget_categories">
+                        <h3>دسته بندی</h3>
+                        <ul>
+                            @foreach (var cat in Model.BlogCategories)
+                            {
+                                <li><a href="@Url.Action("BlogPost","Home",new {BlogType = 1, Title = cat.CategoryName.Replace(' ','_')})">@cat.CategoryName</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-12" id="blgwrapper">
+                <div class="blog_wrapper">
+                    @foreach (var post in Model.Posts)
+                    {
+                        <div class="single_blog">
+                            <div class="blog_thumb">
+                                @if (Model.Files.Any(p => p.RelateId == post.NidBlog && p.RelateType == 10))
+                                {
+                                    <a href="@Url.Action("BlogDetail","Home",new {Title = post.Title.Replace(' ','_')})"><img src="@Model.Files.FirstOrDefault(p => p.RelateId == post.NidBlog && p.RelateType == 10).FileUrl" alt="@post.Title.Replace(' ','_')"></a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("BlogDetail","Home",new {Title = post.Title.Replace(' ','_')})"><img src="" alt="@post.Title.Replace(' ','_')"></a>
+                                }
+                            </div>
+                            <div class="blog_content">
+                                <h3><a href="@Url.Action("BlogDetail","Home",new {Title = post.Title.Replace(' ','_')})">@post.Title</a></h3>
+                                <div class="blog_meta">
+                                    <span class="post_date"><i class="fa-calendar fa"></i> @post.PersianCreateDate.Substring(0,10)</span>
+                                    <span class="author"><i class="fa fa-user-circle"></i> پست شده توسط  @post.User.FirstName&nbsp;@post.User.LastName</span>
+                                    <span class="category">
+                                        <i class="fa fa-folder-open"></i>
+                                        <a href="@Url.Action("BlogPost","Home",new {BlogType = 1, Title = post.Category.CategoryName.Replace(' ','_')})"> @post.Category.CategoryName</a>
+                                    </span>
+                                </div>
+                                <div class="blog_desc">
+                                    <p>@Html.Raw(post.Description) </p>
+                                </div>
+                                <div class="readmore_button">
+                                    <a href="@Url.Action("BlogDetail","Home",new {Title = post.Title.Replace(' ','_')})">ادامه مطلب</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--blog area end-->
+<!--blog pagination area start-->
+<div class="blog_pagination">
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="paginationwrapper">
+                <div class="pagination">
+                    <ul>
+                        <li class="current">1</li>
+                        @if (Model.PostCount > 10)
+                        {
+                            @for (var i = 2; i <= (int)Math.Ceiling((decimal)Model.PostCount / 10); i++)
+                            {
+                                <li><a href="#" onclick="Pagination(event,@i)">@i</a></li>
+                            }
+                            <li class="next"><a href="#" onclick="Pagination(event,0)">بعدی</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--blog pagination area end-->
+@section Scripts
+    {
+    <script type="text/javascript">
+        var PageIndex = 1;
+        function Pagination(e,index) {
+            e.preventDefault();
+            if (index == 0)
+                PageIndex++;
+            else if (index == -1)
+                PageIndex--;
+            else
+                PageIndex = index;
+            $.ajax(
+                {
+                    url: '@Url.Action("BlogPagination","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: {PageNumber: PageIndex },
+                    success: function (result) {
+                        if (result.success) {
+                            $("#blgwrapper").html(result.html);
+                            $("#paginationwrapper").html(result.html2);
+                        }
+                    },
+                    error: function () { }
+                });
+
+        }
+    </script>
+}

@@ -1,0 +1,244 @@
+﻿@model Tuple<IEnumerable<AudioShopBackend.Models.Ship>,byte>
+
+@{
+    ViewData["Title"] = "مرسوله ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="padding:25px;">
+    <div class="col-lg-12 d-flex">
+        <div class="m-1">
+            <label class="form-control-lg">انتخاب نوع مرسوله : </label>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("Ships","Home")" class="btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-spinner"></i>
+                </span>
+                <span class="text">در حال پردازش</span>
+            </a>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("Ships","Home",new {state = 2})" class="btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plane"></i>
+                </span>
+                <span class="text">تحویل پست</span>
+            </a>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("Ships","Home",new {state = 3})" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span class="text">تحویل داده شده</span>
+            </a>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("Ships","Home",new {state = 4})" class="btn btn-danger btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-times-circle"></i>
+                </span>
+                <span class="text">مرجوعی</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        @if (Model.Item2 == 1)
+        {
+        <h6 class="m-0 font-weight-bold text-primary">مرسوله های در حال پردازش</h6>
+        }
+        else if (Model.Item2 == 2)
+        {
+        <h6 class="m-0 font-weight-bold text-primary">مرسوله های تحویل پست</h6>
+        }
+        else if (Model.Item2 == 3)
+        {
+        <h6 class="m-0 font-weight-bold text-primary">مرسوله های تحویل داده شده</h6>
+        }
+        else if (Model.Item2 == 4)
+        {
+        <h6 class="m-0 font-weight-bold text-primary">مرسوله های مرجوعی</h6>
+        }
+        else
+        {
+        <h6 class="m-0 font-weight-bold text-primary">مرسوله ها</h6>
+        }
+    </div>
+    <div class="card-body">
+        <div class="row mr-2">
+            <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                <p id="errorMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <div class="row mr-2">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                تاریخ
+                            </th>
+                            <th>
+                                مشخصات مشتری
+                            </th>
+                            <th>
+                                نحوه ارسال
+                            </th>
+                            <th>
+                                استان
+                            </th>
+                            <th>
+                                شهر
+                            </th>
+                            <th>
+                                هزینه ارسال
+                            </th>
+                            <th>
+                                عملیات
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Item1)
+                        {
+                            <tr id="@item.NidShip">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PersianCreateDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Order.User.FirstName)&nbsp;@Html.DisplayFor(modelItem => item.Order.User.LastName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ShipVia)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Order.StateId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Order.CityId)
+                                </td>
+                                <td>
+                                    @String.Format("{0:n0} تومان", item.ShipPrice)
+                                </td>
+                                <td>
+                                    @if (Model.Item2 == 1)
+                                    {
+                                        <a href="#" onclick="AcceptShip('@item.NidShip','@item.State')" class="btn btn-info btn-circle">
+                                            <i class="fas fa-plane"></i>
+                                        </a>
+                                    }
+                                    else if (Model.Item2 == 2) 
+                                    {
+                                        <a href="#" onclick="AcceptShip('@item.NidShip','@item.State')" class="btn btn-success btn-circle">
+                                            <i class="fas fa-check-circle"></i>
+                                        </a>
+                                    }
+                                    else if (Model.Item2 == 3) 
+                                    {
+                                        <a href="#" onclick="AcceptShip('@item.NidShip','@item.State')" class="btn btn-danger btn-circle">
+                                            <i class="fas fa-times-circle"></i>
+                                        </a>
+                                    }
+                                    else if (Model.Item2 == 4) 
+                                    {
+                                        <a href="#" onclick="AcceptShip('@item.NidShip','@item.State')" class="btn btn-warning btn-circle">
+                                            <i class="fas fa-spinner"></i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">تایید</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="txtmodalBody2"></p>
+            </div>
+            <div class="modal-footer" style="margin:0 auto;">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">خیر</button>
+                <a class="btn btn-success" href="#" onclick="" id="btnMAccept">بلی</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        function AcceptShip(nidship, state) {
+            switch (state) {
+                case "1":
+                    $("#txtmodalBody2").text('آیا میخواهید وضعیت مرسوله را به "تحویل پست" تغییر دهید؟');
+                    break;
+                case "2":
+                    $("#txtmodalBody2").text('آیا میخواهید وضعیت مرسوله را به "تحویل داده شده" تغییر دهید؟');
+                    break;
+                case "3":
+                    $("#txtmodalBody2").text('آیا میخواهید وضعیت مرسوله را به "مرجوعی" تغییر دهید؟');
+                break;
+                case "4":
+                    $("#txtmodalBody2").text('آیا میخواهید وضعیت مرسوله را به "درحال پردازش" تغییر دهید؟');
+                    break;
+                default:
+                // code block
+            }
+            $("#btnMAccept").attr('onclick', "SubmitAcceptShip('" + nidship + "','" + state + "')");
+            $("#acceptModal").modal();
+        }
+        function SubmitAcceptShip(nidship,state) {
+            if(state == 4)
+            state = 1;
+            else
+                state = parseInt(state) + parseInt("1");
+            $.ajax(
+                {
+                    url: '@Url.Action("UpdateShip","Home")' + '?NidShip=' + nidship + '&State=' + state,
+                    type: 'post',
+                    datatype: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            $("#successDiv").removeAttr('hidden');
+                            $("#successMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#successDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                            $("table#dataTable tr#" + nidship).remove();
+                        } else {
+                            $("#errorDiv").removeAttr('hidden');
+                            $("#errorMessage").text(result.message);
+                            window.setTimeout(function () {
+                                $("#errorDiv").attr('hidden', 'hidden');
+                            }, 5000);
+                        }
+                        $("#acceptModal").modal('toggle');
+                    },
+                    error: function () { }
+                });
+        }
+    </script>
+}

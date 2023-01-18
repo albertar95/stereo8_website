@@ -1,0 +1,96 @@
+﻿@model IEnumerable<AudioShopFrontend.Models.File>
+@{
+    ViewData["Title"] = "نحوه ارسال مرسولات";
+    ViewData["Desc"] = "نحوه ارسال مرسولات - استریو 8";
+    ViewData["CUrl"] = string.Format("https://stereo8.ir{0}", Url.Action("Delivery", "Home"));
+    ViewData["Typo"] = "website";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta property="og:updated_time" content="2022-12-09T22:28:56+03:30" />
+    @if (Model.Any(p => p.RelateType == 29))
+    {
+        <meta property="og:image" content="@Model.FirstOrDefault(p => p.RelateType == 29).FileUrl" />
+        <meta name="twitter:image" content="@Model.FirstOrDefault(p => p.RelateType == 29).FileUrl" />
+        <meta property="og:image:width" content="1110" />
+        <meta property="og:image:height" content="763" />
+    }else
+    {
+        <meta property="og:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta name="twitter:image" content="https://stereo8.ir/assets/img/logo/biglogo.webp" />
+        <meta property="og:image:width" content="1920" />
+        <meta property="og:image:height" content="1080" />
+    }
+    <meta property="og:image:alt" content="نحوه ارسال مرسولات" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@ViewData[" Title"]" />
+    <meta name="twitter:description" content="@ViewData["Desc"]" />
+}
+<!--breadcrumbs area start-->
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">صفحه اصلی</a></li>
+                        <li>نحوه ارسال مرسولات</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!--blog body area start-->
+<div class="blog_details blog_padding mt-23">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12">
+                <!--blog grid area start-->
+                <div class="blog_details_wrapper">
+                    <div class="blog_thumb">
+                        <a href="@Url.Action("Delivery","Home")">
+                            @if(Model.Any(p => p.RelateType == 29))
+                            {
+                                <img src="@Model.FirstOrDefault(p => p.RelateType == 29).FileUrl" alt="" />
+                            }
+                        </a>
+                    </div>
+                    <div class="blog_content">
+                        <h3 class="post_title"> نحوه ارسال سفارشات شما</h3>
+                        <div class="post_meta">
+                        </div>
+                        <div class="post_content">
+                            <p class="textalign">
+                                تمامی سفارشات از طریق پست پیشتاز برای شما عزیزان ارسال می شود و
+                                هزینه ارسال نیز در صفحه پرداخت بر اساس تعرفه پست جمهوری اسلامی ایران محاسبه می شود.
+                            </p>
+                            <p class="textalign">
+                                بنا به فاصله شهر مقصد با شهر تهران مرسوله بین 12 تا 72 ساعت به مشتری تحویل داده خواهد شد.
+                                همچنین کد رهگیری مرسوله پستی برای شما ایمیل و در صورت وارد نمودن شماره همراه خود در زمان تکمیل فرآیند خرید،برای شما پیامک نیز خواهد شد
+                               و از طریق آن می توانید بسته پستی خود را پیگیری کنید
+                            </p>
+                            <blockquote>
+                                <p class="textalign">
+                                    در صورت وجود هرگونه مشکل در مرسوله ارسالی می توانید با شماره های پشتیبانی سایت تماس بگیرید
+                                    و پس از بررسی و تایید مشکل،کالا مورد نظر را مرجوع نمایید.
+                                </p>
+                                <p class="textalign">شماره های پشتیبانی : <br />
+                                    09354036003 <br />
+                                    02166743957
+                                </p>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+                <!--blog grid area start-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--blog section area end-->
+
