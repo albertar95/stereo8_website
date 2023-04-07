@@ -17,7 +17,7 @@ public partial class Holoo1Context : DbContext
 
     public virtual DbSet<Article> Articles { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("YOUR_DB_CONNECTION_STRING");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer("Server=MOSY\\TNC;Database=Holoo1;User Id=alireza;Password=alireza@123;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

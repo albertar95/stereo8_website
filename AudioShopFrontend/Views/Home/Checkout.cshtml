@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles
-{
+    {
     <meta name="robots" content="nofollow, noindex" />
 }
 <!--breadcrumbs area start-->
@@ -23,7 +23,7 @@
     </div>
 </div>
 <!--breadcrumbs area end-->
-@if(Model.Order.NidOrder == Guid.Empty)
+@if (Model.Order.NidOrder == Guid.Empty)
 {
     <!--اکنون پرداخت کنیدpage section-->
     <div class="Checkout_section mt-32">
@@ -180,7 +180,8 @@
         </div>
     </div>
     <!--اکنون پرداخت کنیدpage section end-->
-}else
+}
+else
 {
     <!--اکنون پرداخت کنیدpage section-->
     <div class="Checkout_section mt-32">
@@ -363,6 +364,31 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalNamojodAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">اخطار</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 modal__border">
+                            <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;padding-bottom:25px;">محصولات ذیل در حال حاضر ناموجود می باشند.در صورت تمایل به ادامه این محصولات را از لیست خرید خود حذف نمایید</span>
+                            <ul id="NamojodProducts" style="list-style:disc;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
 @{
     string tmpnidorder = "";
     int stateid = 0;
@@ -417,39 +443,58 @@
             }
             $("#btnContinue").click(function (e) {
                 e.preventDefault();
-                //$("#modalDargahAlert").modal();//dargah not ready
-                if (isNullOrWhitespace($("#FirstName").val()) || isNullOrWhitespace($("#LastName").val()) || $("#StateId").val() == 0 || $("#CityId").val() == 0 || isNullOrWhitespace($("#ZipCode").val()) || isNullOrWhitespace($("#Address").val()) || !/^\d{10}$/.test($("#ZipCode").val())) {
-                    $("#warningDiv").removeAttr('hidden');
-                    $("#warningMessage").text('لطفا اطلاعات ارسال مرسوله را تکمیل نمایید');
-                    window.setTimeout(function () {
-                        $("#warningDiv").attr('hidden', 'hidden');
-                    }, 5000);
-                } else {
-                    $("#transferMessage").removeAttr('hidden');
-                    $.ajax(
-                        {
-                            url: '@Url.Action("CheckoutSubmit","Home")',
-                            type: 'post',
-                            datatype: 'json',
-                            data: $("#FrmOrder").serialize(),
-                            success: function (result) {
-                                if (result.success) {
-                                    window.location.href = result.redirect;
-                                } else {
-                                    $("#errorDiv").removeAttr('hidden');
-                                    $("#errorMessage").text(result.message);
+                var checkresult = true;
+                $.ajax(
+                    {
+                        url: '@Url.Action("CheckProductAvailability","Home")',
+                        type: 'post',
+                        datatype: 'json',
+                        data: {},
+                        success: function (result) {
+                            if (!result.success) {
+                                var products = result.products;
+                                $("#NamojodProducts").empty();
+                                products.forEach(function (item) {
+                                    $("#NamojodProducts").append('<li><span class="tab" style="font-weight:bold;">' + item + '</span></li>');
+                                });
+                                $("#modalNamojodAlert").modal();
+                            } else {
+                                //$("#modalDargahAlert").modal();//dargah not ready
+                                if (isNullOrWhitespace($("#FirstName").val()) || isNullOrWhitespace($("#LastName").val()) || $("#StateId").val() == 0 || $("#CityId").val() == 0 || isNullOrWhitespace($("#ZipCode").val()) || isNullOrWhitespace($("#Address").val()) || !/^\d{10}$/.test($("#ZipCode").val())) {
+                                    $("#warningDiv").removeAttr('hidden');
+                                    $("#warningMessage").text('لطفا اطلاعات ارسال مرسوله را تکمیل نمایید');
                                     window.setTimeout(function () {
-                                        $("#errorDiv").attr('hidden', 'hidden');
+                                        $("#warningDiv").attr('hidden', 'hidden');
                                     }, 5000);
+                                } else {
+                                    $("#transferMessage").removeAttr('hidden');
+                                    $.ajax(
+                                        {
+                                            url: '@Url.Action("CheckoutSubmit","Home")',
+                                            type: 'post',
+                                            datatype: 'json',
+                                            data: $("#FrmOrder").serialize(),
+                                            success: function (result) {
+                                                if (result.success) {
+                                                    window.location.href = result.redirect;
+                                                } else {
+                                                    $("#errorDiv").removeAttr('hidden');
+                                                    $("#errorMessage").text(result.message);
+                                                    window.setTimeout(function () {
+                                                        $("#errorDiv").attr('hidden', 'hidden');
+                                                    }, 5000);
+                                                }
+                                            },
+                                            error: function () { }
+                                        });
+                                    $("#transferMessage").attr('hidden', 'hidden');
                                 }
-                            },
-                            error: function () { }
-                        });
-                    $("#transferMessage").attr('hidden','hidden');
-                }
+                            }
+                        },
+                        error: function () { }
+                    });
             });
-            $("#CityId").change(function()
-            {
+            $("#CityId").change(function () {
                 $.ajax(
                     {
                         url: '@Url.Action("GetShipFee","Home")',
@@ -470,6 +515,9 @@
             if (typeof input === 'undefined' || input == null) return true;
 
             return input.replace(/\s/g, '').length < 1;
+        }
+        function checkProductsInCart() {
+
         }
     </script>
 }

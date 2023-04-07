@@ -1,95 +1,142 @@
-﻿@model IEnumerable<AudioShopBackend.Models.Order>
+﻿@model Tuple<IEnumerable<AudioShopBackend.Models.Order>,IEnumerable<AudioShopBackend.Models.City>>
 
 @{
     ViewData["Title"] = "سفارشات";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<div class="row" style="padding:25px;">
+    <div class="col-lg-12 d-flex">
+        <div class="m-1">
+            <label class="form-control-lg">انتخاب وضعیت سفارش : </label>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("Orders","Home")" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span class="text">پرداخت شده</span>
+            </a>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("ClosedOrders","Home")" class="btn btn-info btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-box"></i>
+                </span>
+                <span class="text">بسته شده</span>
+            </a>
+        </div>
+        <div class="m-1">
+            <a href="@Url.Action("FailedPaymentOrders","Home")" class="btn btn-danger btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-times-circle"></i>
+                </span>
+                <span class="text">خطا در پرداخت</span>
+            </a>
+        </div>
+    </div>
+</div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">سفارشات</h6>
+        <h6 class="m-0 font-weight-bold text-primary">سفارشات پرداخت شده</h6>
     </div>
     <div class="card-body">
-        <div class="row" style="padding:25px;">
-            <div class="col-lg-6">
-                <div class="m-1">
-                    <a href="@Url.Action("ClosedOrders","Home")" class="btn btn-success btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-check-circle"></i>
-                        </span>
-                        <span class="text">سفارشات بسته شده</span>
-                    </a>
-                </div>
+        <div class="row mr-2">
+            <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
+                <p id="successMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="col-lg-6">
-                <div class="alert alert-success alert-dismissible fade show" style="width:fit-content;" role="alert" id="successDiv" hidden>
-                    <p id="successMessage"></p>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
-                    <p id="errorMessage"></p>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show" style="width:fit-content;" role="alert" id="errorDiv" hidden>
+                <p id="errorMessage"></p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>
-                            تاریخ
-                        </th>
-                        <th>
-                            مشخصات
-                        </th>
-                        <th>
-                            شهر
-                        </th>
-                        <th>
-                            مبلغ
-                        </th>
-                        <th>
-                            شماره تماس
-                        </th>
-                        <th>
-                            عملیات
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr id="@item.NidOrder">
-                            <td>
-                                @Html.DisplayFor(modelItem => item.PersianCreateDate)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FirstName)&nbsp;@Html.DisplayFor(modelItem => item.LastName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CityId)
-                            </td>
-                            <td>
-                                @String.Format("{0:n0} تومان", item.TotalPrice)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Tel)
-                            </td>
-                            <td>
-                                <a href="@Url.Action("OrderDetail","Home",new{ NidOrder = item.NidOrder})" target="_blank" class="btn btn-info btn-circle">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
-                            </td>
+        <div class="row mr-2">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                تاریخ
+                            </th>
+                            <th>
+                                مشخصات
+                            </th>
+                            <th>
+                                شهر
+                            </th>
+                            <th>
+                                مبلغ
+                            </th>
+                            <th>
+                                وضعیت سفارش
+                            </th>
+                            <th>
+                                عملیات
+                            </th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Item1)
+                        {
+                            <tr id="@item.NidOrder">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PersianCreateDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FirstName)&nbsp;@Html.DisplayFor(modelItem => item.LastName)
+                                </td>
+                                <td>
+                                    @Model.Item2.FirstOrDefault(p => p.Id == item.CityId).Name
+                                </td>
+                                <td>
+                                    @String.Format("{0:n0} تومان", item.TotalPrice)
+                                </td>
+                                @if (item.State == 0)
+                                {
+                                    <td>
+                                        پرداخت نشده
+                                    </td>
+                                }
+                                else if (item.State == 100 || item.State == 101)
+                                {
+                                    <td>
+                                        پرداخت شده
+                                    </td>
+                                }
+                                else if (item.State < 0)
+                                {
+                                    <td>
+                                        خطا در پرداخت
+                                    </td>
+                                }
+                                else if (item.State == 1)
+                                {
+                                    <td>
+                                        بسته شده
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        نامشخص
+                                    </td>
+                                }
+                                <td>
+                                    <a href="@Url.Action("OrderDetail","Home",new{ NidOrder = item.NidOrder})" target="_blank" class="btn btn-info btn-circle">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
+            </div>
         </div>
     </div>
 </div>

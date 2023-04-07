@@ -100,7 +100,7 @@
                                 <div class="checkout_btn">
                                     @if(Model.Carts.Any())
                                     {
-                                        <a id="btnCheckout" href="@Url.Action("Checkout","Home")">پرداخت</a>
+                                        <a id="btnCheckout" href="#" onclick="CheckoutSubmit(event)">پرداخت</a>
                                     }
                                 </div>
                             </div>
@@ -137,9 +137,60 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalNamojodAlert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="margin: 0 auto;">
+                <h5 class="modal-title" id="exampleModalLabel">اخطار</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 modal__border">
+                            <span class="modal__product-cart-item" style="text-align:right;direction:rtl;float:right;padding-bottom:25px;">محصولات ذیل در حال حاضر ناموجود می باشند.در صورت تمایل به ادامه این محصولات را از لیست خرید خود حذف نمایید</span>
+                            <ul id="NamojodProducts" style="list-style:disc;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin: 0 auto;">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts
     {
     <script type="text/javascript">
+        function CheckoutSubmit(e)
+        {
+            e.preventDefault();
+            $.ajax(
+                {
+                    url: '@Url.Action("CheckProductAvailability","Home")',
+                    type: 'post',
+                    datatype: 'json',
+                    data: {},
+                    success: function (result) {
+                        if (result.success) {
+                            window.location = '@Url.Action("Checkout","Home")';
+                        }else
+                        {
+                            var products = result.products;
+                            $("#NamojodProducts").empty();
+                            products.forEach(function(item)
+                            {
+                                $("#NamojodProducts").append('<li><span class="tab" style="font-weight:bold;">'+ item +'</span></li>');
+                            });
+                            $("#modalNamojodAlert").modal();
+                        }
+                    },
+                    error: function () { }
+                });
+        }
         function QuantityChanged(nidcart, price, quantity) {
             $.ajax(
                 {

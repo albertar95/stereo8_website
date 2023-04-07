@@ -1,6 +1,6 @@
-﻿@model Tuple<IEnumerable<AudioShopBackend.Models.Order>,IEnumerable<AudioShopBackend.Models.City>>
+﻿@model IEnumerable<AudioShopBackend.Models.Order>
 @{
-    ViewData["Title"] = "سفارشات بسته شده";
+    ViewData["Title"] = "سفارشات خطا دار";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -37,7 +37,7 @@
 </div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">سفارشات بسته شده</h6>
+        <h6 class="m-0 font-weight-bold text-primary">سفارشات خطا در پرداخت</h6>
     </div>
     <div class="card-body">
         <div class="row mr-2">
@@ -80,7 +80,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Item1)
+                        @foreach (var item in Model)
                         {
                             <tr id="@item.NidOrder">
                                 <td>
@@ -90,7 +90,7 @@
                                     @Html.DisplayFor(modelItem => item.FirstName)&nbsp;@Html.DisplayFor(modelItem => item.LastName)
                                 </td>
                                 <td>
-                                    @Model.Item2.FirstOrDefault(p => p.Id == item.CityId).Name
+                                    @Html.DisplayFor(modelItem => item.CityId)
                                 </td>
                                 <td>
                                     @String.Format("{0:n0} تومان", item.TotalPrice)

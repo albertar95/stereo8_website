@@ -6,7 +6,7 @@ namespace AudioShopBackend.Services.Contracts
     {
         IEnumerable<Comment> GetComments(int State = 0,int Pagesize = 100,int Skip = 0);
         IEnumerable<Ship> GetShips(int State = 0,int Pagesize = 100, int Skip = 0);
-        IEnumerable<Order> GetOrders(int State = 0,bool IncludeAll = true, int Pagesize = 100, int Skip = 0);
+        IEnumerable<Order> GetOrders(int State = 0, bool IncludeSuccessfulls = true,bool IncludeFailedPayments = false, bool IncludeAll = true, int Pagesize = 100, int Skip = 0);
         IEnumerable<Product> GetProducts(bool IncludeAll = true, int State = 0, int Pagesize = 100, int Skip = 0);
         IEnumerable<Product> GetProductsByCategory(Guid NidCategory,Guid NidType,Guid NidBrand, int State = 0, bool IncludeAll = true, int Pagesize = 100, int Skip = 0);
         IEnumerable<Product> GetProductsByCreateDate(DateTime From,DateTime To, int State = 0, bool IncludeAll = true, int Pagesize = 100, int Skip = 0);

@@ -88,12 +88,12 @@ namespace AudioShopBackend.Controllers
             return RedirectToAction("Users");
         }
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl = "")
         {
-            return View();
+            return View("Login",ReturnUrl);
         }
         [AllowAnonymous]
-        public async Task<IActionResult> SubmitLogin(string Username, string Password)
+        public async Task<IActionResult> SubmitLogin(string Username, string Password,string returnUrl = "")
         {
             var user = _userAction.LoginWithUsername(Username, Password);
             if(user.NidUser == Guid.Empty)
@@ -120,7 +120,10 @@ namespace AudioShopBackend.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
-                    return RedirectToAction("Index");
+                    if (!String.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        return Redirect(returnUrl);
+                    else
+                        return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -350,23 +353,29 @@ namespace AudioShopBackend.Controllers
         }
         public IActionResult Orders()
         {
-            var orders = _productAction.GetOrders();
-            return View(orders);
+            var orders = _productAction.GetOrders(2);
+            return View(new Tuple<IEnumerable<Order>,IEnumerable<City>>(orders,
+                _commonAction.GetCities()));
         }
         public IActionResult ClosedOrders()
         {
-            var orders = _productAction.GetOrders(1);
+            var orders = _productAction.GetOrders(1,false);
+            return View(new Tuple<IEnumerable<Order>,IEnumerable<City>>(orders,_commonAction.GetCities()));
+        }
+        public IActionResult FailedPaymentOrders()
+        {
+            var orders = _productAction.GetOrders(2, false,true);
             return View(orders);
         }
         public IActionResult OrderDetail(Guid NidOrder)
         {
             var order = _productAction.GetOrder(NidOrder);
-            return View(order);
+            return View(new Tuple<Order,IEnumerable<City>,IEnumerable<State>>(order,_commonAction.GetCities(),_commonAction.GetStates()));
         }
         public IActionResult Ships(byte state = 1)
         {
             var ships = _productAction.GetShips(state);
-            return View(new Tuple<IEnumerable<Ship>,byte>(ships,state));
+            return View(new Tuple<IEnumerable<Ship>,byte,IEnumerable<City>,IEnumerable<State>>(ships,state,_commonAction.GetCities(),_commonAction.GetStates()));
         }
         public IActionResult UpdateShip(Guid NidShip,byte State) 
         {

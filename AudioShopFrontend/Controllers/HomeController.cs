@@ -31,7 +31,7 @@ namespace AudioShopFrontend.Controllers
             _db = databaseAction;
         }
         //first page section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Index()
         {
             IndexViewModel model = new IndexViewModel();
@@ -45,7 +45,7 @@ namespace AudioShopFrontend.Controllers
                     files.Add(f);
                 }
             }
-            foreach (var f in _db.GetCommonFiles(16,24))
+            foreach (var f in _db.GetCommonFiles(16, 24))
             {
                 files.Add(f);
             }
@@ -77,7 +77,7 @@ namespace AudioShopFrontend.Controllers
             return View(model);
         }
         //category page section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Category(string Title,string BrandId = "",string TypeId = "")
         {
             CategoryViewModel model = new CategoryViewModel();
@@ -212,7 +212,7 @@ namespace AudioShopFrontend.Controllers
                 return Json(new { success = false, html = "" });
         }
         //product page section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Product(string Title)
          {
             ProductViewModel model = new ProductViewModel();
@@ -250,7 +250,7 @@ namespace AudioShopFrontend.Controllers
             return RedirectToAction("Product",new { Title = _db.GetProductById(comment.ProductId,false).ProductName.Replace(' ', '_') });
         }
         //user section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Profile()
         {
             if (Request.Cookies.ContainsKey("Stereo8Login"))
@@ -262,7 +262,7 @@ namespace AudioShopFrontend.Controllers
                 return RedirectToAction("Login");
         }
         [AllowAnonymous]
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Login()
         {
             return View();
@@ -451,7 +451,7 @@ namespace AudioShopFrontend.Controllers
             return View(user);
         }
         //purchase section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Carts()
         {
             if (Request.Cookies.ContainsKey("Stereo8Login"))
@@ -472,7 +472,7 @@ namespace AudioShopFrontend.Controllers
             else
                 return RedirectToAction("Login");
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Favorites()
         {
             if (Request.Cookies.ContainsKey("Stereo8Login"))
@@ -620,7 +620,18 @@ namespace AudioShopFrontend.Controllers
             else
                 return Json(new { success = false });
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        public IActionResult CheckProductAvailability()
+        {
+            if (Request.Cookies.ContainsKey("Stereo8Login"))
+            {
+                var Niduser = Guid.Parse(UsersAuth.GetSpecificClaim(Request.Cookies["Stereo8Login"], 2));
+                var result = _db.CheckProductsAvailabilityInCart(Niduser);
+                return Json(new { success = result.Item1, products = result.Item2.ToArray() });
+            }
+            else
+                return null;
+        }
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Checkout()
         {
             if (Request.Cookies.ContainsKey("Stereo8Login"))
@@ -754,7 +765,7 @@ namespace AudioShopFrontend.Controllers
                 using (var client = new HttpClient())
                 {
                     string authority;
-                    RequestParameters parameters = new RequestParameters("YOUR_MERCHANT_ID", (tmporder.TotalPrice*10).ToString(), "خرید از وب سایت استریو 8", "http://stereo8.ir/Verify?NidOrder=" + NidOrder, tmporder.Tel ?? "", tmporder.Email ?? "");
+                    RequestParameters parameters = new RequestParameters("eefcd17b-6b67-4261-b8e0-2bd14e059957", (tmporder.TotalPrice*10).ToString(), "خرید از وب سایت استریو 8", "http://stereo8.ir/Verify?NidOrder=" + NidOrder, tmporder.Tel ?? "", tmporder.Email ?? "");
 
                     var json = JsonConvert.SerializeObject(parameters);
 
@@ -812,7 +823,7 @@ namespace AudioShopFrontend.Controllers
 
                 parameters.amount = (tmpOrder.TotalPrice*10).ToString();
 
-                parameters.merchant_id = "YOUR_MERCHANT_ID";
+                parameters.merchant_id = "eefcd17b-6b67-4261-b8e0-2bd14e059957";
 
 
                 using (HttpClient client = new HttpClient())
@@ -854,6 +865,19 @@ namespace AudioShopFrontend.Controllers
                             var tmpship = _db.GetShipByOrderId(tmpOrder.NidOrder);
                             tmpship.State = 1;//paid
                             _db.UpdateShip(tmpship);
+                            try
+                            {
+                                //send notification mail to owner
+                                if (tmpOrder.State == 100 || tmpOrder.State == 101)
+                                {
+                                    var orderdetails = _db.GetOrderDetailsByOrderId(tmpOrder.NidOrder).ToList();
+                                    string message = RenderViewToString.RenderViewAsync(this, "_NewOrderNotification", new Tuple<Order, List<OrderDetail>>(tmpOrder, orderdetails)).Result;
+                                    _db.SendNotificationToOwner(message, $"{tmpOrder.FirstName} {tmpOrder.LastName}");
+                                }
+                            }
+                            catch (Exception)
+                            {
+                            }
                         }
                     }
                     else if (errors != "[]")
@@ -867,7 +891,7 @@ namespace AudioShopFrontend.Controllers
             }
             catch (Exception ex)
             {
-                tmpOrder.State = 102;//exception occured
+                tmpOrder.State = -1002;//exception occured
                 _db.UpdateOrder(tmpOrder);
             }
             return View(new CheckoutViewModel() { OrderDetails = _db.GetOrderDetailsByOrderId(tmpOrder.NidOrder), Order = tmpOrder });
@@ -885,7 +909,7 @@ namespace AudioShopFrontend.Controllers
                 return Json(new { success = false });
             }
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult AboutUs()
         {
             List<Models.File> files = new List<Models.File>();
@@ -895,12 +919,12 @@ namespace AudioShopFrontend.Controllers
             }
             return View(files);
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult ContactUs()
         {
             return View();
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Categories()
         {
             CategoriesViewModel model = new CategoriesViewModel();
@@ -933,7 +957,7 @@ namespace AudioShopFrontend.Controllers
                 TempData["ContactError"] = "خطایی رخ داده است.لطفا مجددا امتحان کنید";
             return RedirectToAction("ContactUs");
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Bargain()
         {
             CategoryViewModel model = new CategoryViewModel();
@@ -973,7 +997,7 @@ namespace AudioShopFrontend.Controllers
             model.Files = Files;
             return Json(new { success = true, html = RenderViewToString.RenderViewAsync(this, "_BargainPagination", model, true), countMessage = $"تعداد محصولات : {model.ProductCount}" });
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Delivery()
         {
             List<Models.File> files = new List<Models.File>();
@@ -988,7 +1012,7 @@ namespace AudioShopFrontend.Controllers
             return View("HttpError",status);
         }
         //blog section
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult Blog() 
         {
             BlogViewModel model = new BlogViewModel();
@@ -1016,7 +1040,7 @@ namespace AudioShopFrontend.Controllers
             model.Files = files;
             return View(model);
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult BlogPost(byte BlogType,string Title)
         {
             BlogViewModel model = new BlogViewModel();
@@ -1061,7 +1085,7 @@ namespace AudioShopFrontend.Controllers
             model.PageUrl = String.Format("http://stereo8.ir/BlogPost?BlogType={0}&Title={1}",BlogType,Title);
             return View(model);
         }
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
         public IActionResult BlogDetail(string Title)
         {
             BlogDetailViewModel model = new BlogDetailViewModel();

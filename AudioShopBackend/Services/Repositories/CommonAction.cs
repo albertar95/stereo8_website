@@ -149,5 +149,31 @@ namespace AudioShopBackend.Services.Repositories
                 return new List<Models.File>();
             }
         }
+
+        public IEnumerable<City> GetCities()
+        {
+            try
+            {
+                return _context.Cities.ToList();
+            }
+            catch (Exception)
+            {
+
+                return new List<Models.City>();
+            }
+        }
+
+        public IEnumerable<State> GetStates()
+        {
+            try
+            {
+                return _context.States.ToList();
+            }
+            catch (Exception)
+            {
+
+                return new List<Models.State>();
+            }
+        }
     }
 }

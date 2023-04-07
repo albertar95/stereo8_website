@@ -1,4 +1,5 @@
-﻿using AudioShopFrontend.Models;
+﻿using AudioShopFrontend.Helpers;
+using AudioShopFrontend.Models;
 using AudioShopFrontend.Services.Contracts;
 using AudioShopFrontend.ViewModels;
 using MailKit.Net.Smtp;
@@ -947,6 +948,46 @@ namespace AudioShopFrontend.Services.Repositories
             {
                 return new List<Models.File>();
             }
+        }
+
+        public void SendNotificationToOwner(string HtmlMessage,string CostumerInfo,string TextMessage = "",byte MailType = 0)
+        {
+            if(MailType == 0 || MailType == 1) // mail
+            {
+                var Recievers = _context.Settings.Where(p => p.SettingAttribute == "OwnerEmail").ToList();
+                if (Recievers != null)
+                {
+                    foreach (var owner in Recievers)
+                    {
+                        MailRequest newOrder = new MailRequest();
+                        newOrder.Subject = $"سفارش جدید - وب سایت استریو 8 - {CostumerInfo}";
+                        newOrder.ToEmail = owner.SettingValue;
+                        newOrder.Body = HtmlMessage;
+                        SendEmail(newOrder);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<OrderDetail> GetOrderDetailsByOrderId(Guid NidOrder)
+        {
+            return _context.OrderDetails.Where(p => p.OrderId == NidOrder).Include(p => p.Product).ToList();
+        }
+
+        public Tuple<bool, List<string>> CheckProductsAvailabilityInCart(Guid NidUser)
+        {
+            var carts = _context.Carts.Where(p => p.UserId == NidUser).ToList();
+            bool overallCheck = true;
+            List<string> products = new List<string>();
+            foreach (var cart in carts)
+            {
+                if (_context.Products.FirstOrDefault(p => p.NidProduct == cart.ProductId).AvailableCount == 0)
+                {
+                    overallCheck = false;
+                    products.Add(_context.Products.FirstOrDefault(p => p.NidProduct == cart.ProductId).ProductName);
+                }
+            }
+            return Tuple.Create(overallCheck, products);
         }
     }
 }

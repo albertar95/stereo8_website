@@ -1,4 +1,4 @@
-﻿@model AudioShopBackend.Models.Order
+﻿@model Tuple<AudioShopBackend.Models.Order,IEnumerable<AudioShopBackend.Models.City>,IEnumerable<AudioShopBackend.Models.State>>
 
 @{
     ViewData["Title"] = "جزییات سفارش";
@@ -19,13 +19,13 @@
                     نام
                 </label>
                 <label class="col-sm-4">
-                    @Html.DisplayFor(model => model.FirstName)
+                    @Html.DisplayFor(model => model.Item1.FirstName)
                 </label>
                 <label class="col-sm-2">
                     نام خانوادگی
                 </label>
                 <label class="col-sm-4">
-                    @Html.DisplayFor(model => model.LastName)
+                    @Html.DisplayFor(model => model.Item1.LastName)
                 </label>
             </div>
             <div class="row col-sm-12">
@@ -33,13 +33,13 @@
                     استان
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.StateId)
+                    @Model.Item3.FirstOrDefault(p => p.Id == Model.Item1.StateId).Name
                 </div>
                 <div class="col-sm-2">
                     شهر
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.CityId)
+                    @Model.Item2.FirstOrDefault(p => p.Id == Model.Item1.CityId).Name
                 </div>
             </div>
             <div class="row col-sm-12">
@@ -47,13 +47,13 @@
                     آدرس
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.Address)
+                    @Html.DisplayFor(model => model.Item1.Address)
                 </div>
                 <div class="col-sm-2">
                     کدپستی
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.ZipCode)
+                    @Html.DisplayFor(model => model.Item1.ZipCode)
                 </div>
             </div>
             <div class="row col-sm-12">
@@ -61,13 +61,13 @@
                     شماره تماس
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.Tel)
+                    @Html.DisplayFor(model => model.Item1.Tel)
                 </div>
                 <div class="col-sm-2">
                     ایمیل
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.Email)
+                    @Html.DisplayFor(model => model.Item1.Email)
                 </div>
             </div>
             <div class="row col-sm-12">
@@ -75,13 +75,13 @@
                     کدملی
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.MelliCode)
+                    @Html.DisplayFor(model => model.Item1.MelliCode)
                 </div>
                 <div class="col-sm-2">
                     نام کاربری
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.User.Username)
+                    @Html.DisplayFor(model => model.Item1.User.Username)
                 </div>
             </div>
         </div>
@@ -93,13 +93,13 @@
                     تاریخ
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.PersianCreateDate)
+                    @Html.DisplayFor(model => model.Item1.PersianCreateDate)
                 </div>
                 <div class="col-sm-2">
                     مبلغ کل
                 </div>
                 <div class="col-sm-4">
-                    @String.Format("{0:n0} تومان", Model.TotalPrice)
+                    @String.Format("{0:n0} تومان", Model.Item1.TotalPrice)
                 </div>
             </div>
             <div class="row col-sm-12">
@@ -107,20 +107,20 @@
                     توضیحات
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.Description)
+                    @Html.DisplayFor(model => model.Item1.Description)
                 </div>
                 <div class="col-sm-2">
                     تاریخ آخرین تغییر
                 </div>
                 <div class="col-sm-4">
-                    @Html.DisplayFor(model => model.PersianLastModified)
+                    @Html.DisplayFor(model => model.Item1.PersianLastModified)
                 </div>
             </div>
             <div class="row col-sm-12">
                 <div class="col-sm-2">
                     محصولات
                 </div>
-                @foreach (var prd in Model.OrderDetails)
+                @foreach (var prd in Model.Item1.OrderDetails)
                 {
                     <div class="col-sm-10">
                         @prd.Product.ProductName

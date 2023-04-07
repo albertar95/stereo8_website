@@ -15,7 +15,6 @@ public partial class AudioShopDbContext : DbContext
         : base(options)
     {
     }
-
     public virtual DbSet<Blog> Blogs { get; set; }
 
     public virtual DbSet<BlogCategory> BlogCategories { get; set; }
@@ -52,7 +51,11 @@ public partial class AudioShopDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public virtual DbSet<City> Cities { get; set; }
+
+    public virtual DbSet<State> States { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -453,6 +456,23 @@ public partial class AudioShopDbContext : DbContext
         modelBuilder.Entity<BlogComment>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         modelBuilder.Entity<Blog>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         modelBuilder.Entity<Blog>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<City>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(500);
+
+            entity.HasOne(d => d.State).WithMany(p => p.Cities)
+                .HasForeignKey(d => d.StateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cities_States");
+        });
+
+        modelBuilder.Entity<State>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(500);
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

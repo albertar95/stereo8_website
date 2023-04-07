@@ -1,4 +1,4 @@
-﻿@model Tuple<IEnumerable<AudioShopBackend.Models.Ship>,byte>
+﻿@model Tuple<IEnumerable<AudioShopBackend.Models.Ship>,byte,IEnumerable<AudioShopBackend.Models.City>,IEnumerable<AudioShopBackend.Models.State>>
 
 @{
     ViewData["Title"] = "مرسوله ها";
@@ -124,10 +124,10 @@
                                     @Html.DisplayFor(modelItem => item.ShipVia)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Order.StateId)
+                                    @Model.Item4.FirstOrDefault(p => p.Id == item.Order.StateId).Name
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Order.CityId)
+                                    @Model.Item3.FirstOrDefault(p => p.Id == item.Order.CityId).Name
                                 </td>
                                 <td>
                                     @String.Format("{0:n0} تومان", item.ShipPrice)

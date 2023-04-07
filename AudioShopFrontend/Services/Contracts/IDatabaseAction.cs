@@ -40,6 +40,7 @@ namespace AudioShopFrontend.Services.Contracts
         public decimal GetCartAggregateByUserId(Guid NidUser);
         public Cart GetCartById(Guid NidCart);
         public Cart GetCartByProductId(Guid NidUser,Guid NidProduct);
+        public Tuple<bool, List<string>> CheckProductsAvailabilityInCart(Guid NidUser);
         bool UpdateCart(Cart item);
         //favorite page
         public IEnumerable<Favorite> GetFavoritesByUserId(Guid NidUser, bool IncludeAll = true);
@@ -59,6 +60,9 @@ namespace AudioShopFrontend.Services.Contracts
         public Order GetOrderById(Guid NidOrder, bool IncludeAll = true);
         public bool UpdateAvailableCount(Guid NidProduct, int Quantity);
         bool UpdateProduct(Product item);
+        //send notification mail
+        void SendNotificationToOwner(string HtmlMessage, string CostumerInfo, string TextMessage = "", byte MailType = 0);
+        IEnumerable<OrderDetail> GetOrderDetailsByOrderId(Guid NidOrder);
         //general
         public IEnumerable<Product> SearchProduct(string input);
         public Tuple<IEnumerable<Product>, int> GetBargainedProducts(int Pagesize = 10, int Skip = 0);

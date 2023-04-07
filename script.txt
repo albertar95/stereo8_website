@@ -1,0 +1,1 @@
+scaffold-dbcontext "Server=.\MSSQL2017;Database=AudioShopDb;User Id=sa;Password=safa@123;TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Tables States,Cities -Force

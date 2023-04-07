@@ -228,14 +228,44 @@ namespace AudioShopBackend.Services.Repositories
             }
         }
 
-        public IEnumerable<Order> GetOrders(int State = 0, bool IncludeAll = true, int Pagesize = 100, int Skip = 0)
+        public IEnumerable<Order> GetOrders(int State = 0,bool IncludeSuccessfulls = true, bool IncludeFailedPayments = false, bool IncludeAll = true, int Pagesize = 100, int Skip = 0)
         {
             try
             {
                 if (IncludeAll)
-                    return _context.Orders.Include(q => q.Ships).Include(q => q.OrderDetails).Include(q => q.User).Where(p => p.State == State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                {
+                    if(IncludeSuccessfulls)
+                    {
+                        if(IncludeFailedPayments)
+                            return _context.Orders.Include(q => q.Ships).Include(q => q.OrderDetails).Include(q => q.User).Where(p => p.State >= State || p.State < 0).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                        else
+                            return _context.Orders.Include(q => q.Ships).Include(q => q.OrderDetails).Include(q => q.User).Where(p => p.State >= State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                    }
+                    else
+                    {
+                        if(IncludeFailedPayments)
+                            return _context.Orders.Include(q => q.Ships).Include(q => q.OrderDetails).Include(q => q.User).Where(p => p.State == State || p.State < 0).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                        else
+                            return _context.Orders.Include(q => q.Ships).Include(q => q.OrderDetails).Include(q => q.User).Where(p => p.State == State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                    }
+                }
                 else
-                    return _context.Orders.Where(p => p.State == State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                {
+                    if(IncludeSuccessfulls)
+                    {
+                        if(IncludeFailedPayments)
+                            return _context.Orders.Where(p => p.State >= State || p.State < 0).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                        else
+                            return _context.Orders.Where(p => p.State >= State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                    }
+                    else
+                    {
+                        if(IncludeFailedPayments)
+                            return _context.Orders.Where(p => p.State == State || p.State < 0).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                        else
+                            return _context.Orders.Where(p => p.State == State).OrderByDescending(x => x.CreateDate).Skip(Skip).Take(Pagesize).ToList();
+                    }
+                }
             }
             catch (Exception)
             {

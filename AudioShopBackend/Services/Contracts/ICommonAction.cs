@@ -9,5 +9,7 @@
         IEnumerable<Models.File> GetCommonFiles();
         bool UpdateFile(Models.File item);
         string[] GetIndexPageValues();
+        IEnumerable<Models.City> GetCities();
+        IEnumerable<Models.State> GetStates();
     }
 }

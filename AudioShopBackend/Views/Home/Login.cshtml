@@ -1,4 +1,5 @@
-﻿@{
+﻿@model string
+@{
     Layout = null;
 }
 
@@ -50,6 +51,11 @@
                                                    id="Username" name="Username"
                                                    placeholder="نام کاربری" autofocus>
                                         </div>
+                                        @if(!string.IsNullOrWhiteSpace(Model))
+                                        {
+                                            <input type="text" class="form-control form-control-user"
+                                               id="returnUrl" name="returnUrl" value="@Model" hidden>
+                                        }
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" required
                                                    id="Password" name="Password" placeholder="کلمه عبور">

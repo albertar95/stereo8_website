@@ -15,7 +15,6 @@ public partial class AudioShopDbContext : DbContext
         : base(options)
     {
     }
-
     public virtual DbSet<Blog> Blogs { get; set; }
 
     public virtual DbSet<BlogCategory> BlogCategories { get; set; }
@@ -51,8 +50,11 @@ public partial class AudioShopDbContext : DbContext
     public virtual DbSet<Type> Types { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<City> Cities { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public virtual DbSet<State> States { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
@@ -73,10 +75,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.Title).HasMaxLength(1000);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Blogs)
@@ -100,10 +102,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
         });
 
         modelBuilder.Entity<BlogComment>(entity =>
@@ -114,7 +116,7 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
 
             entity.HasOne(d => d.Blog).WithMany(p => p.BlogComments)
                 .HasForeignKey(d => d.BlogId)
@@ -137,10 +139,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Brands)
                 .HasForeignKey(d => d.CategoryId)
@@ -157,10 +159,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.Quantity).HasDefaultValueSql("((1))");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Carts)
@@ -184,10 +186,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -198,7 +200,7 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
 
             entity.HasOne(d => d.Product).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.ProductId)
@@ -219,7 +221,7 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
 
             entity.HasOne(d => d.Product).WithMany(p => p.Favorites)
                 .HasForeignKey(d => d.ProductId)
@@ -242,7 +244,7 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.FileName).HasMaxLength(150);
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
         });
 
         modelBuilder.Entity<Link>(entity =>
@@ -270,10 +272,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.MelliCode).HasColumnType("decimal(12, 0)");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.Tel).HasMaxLength(25);
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(12, 0)");
             entity.Property(e => e.ZipCode).HasColumnType("decimal(12, 0)");
@@ -293,10 +295,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.Quantity).HasDefaultValueSql("((1))");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
@@ -319,10 +321,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.Price).HasColumnType("decimal(12, 0)");
             entity.Property(e => e.PriceWithoutOff).HasColumnType("decimal(12, 0)");
             entity.Property(e => e.ProductName).HasMaxLength(1000);
@@ -366,10 +368,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.DueDate).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianDueDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([DueDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([DueDate]))", false);
             entity.Property(e => e.ShipPrice).HasColumnType("decimal(12, 0)");
             entity.Property(e => e.ZipCode).HasColumnType("decimal(12, 0)");
 
@@ -396,10 +398,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastModified).HasColumnType("datetime");
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastModified)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastModified]))", false);
             entity.Property(e => e.TypeName).HasMaxLength(500);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Types)
@@ -419,10 +421,10 @@ public partial class AudioShopDbContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.PersianCreateDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([CreateDate]))", false);
             entity.Property(e => e.PersianLastLoginDate)
                 .HasMaxLength(30);
-                //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastLoginDate]))", false);
+            //.HasComputedColumnSql("([dbo].[GeorgianDateToPersianDate]([LastLoginDate]))", false);
             entity.Property(e => e.Tel).HasMaxLength(25);
             entity.Property(e => e.Username).HasMaxLength(100);
             entity.Property(e => e.ZipCode).HasColumnType("decimal(12, 0)");
@@ -453,6 +455,23 @@ public partial class AudioShopDbContext : DbContext
         modelBuilder.Entity<BlogComment>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         modelBuilder.Entity<Blog>().Property(e => e.PersianCreateDate).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         modelBuilder.Entity<Blog>().Property(e => e.PersianLastModified).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        modelBuilder.Entity<City>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(500);
+
+            entity.HasOne(d => d.State).WithMany(p => p.Cities)
+                .HasForeignKey(d => d.StateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cities_States");
+        });
+
+        modelBuilder.Entity<State>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Name).HasMaxLength(500);
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
